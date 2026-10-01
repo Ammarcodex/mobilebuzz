@@ -1,0 +1,135 @@
+[
+  {
+    "slug": "smartphone",
+    "name": "Smartphones",
+    "count": 64,
+    "brands": [
+      {
+        "slug": "samsung",
+        "name": "Samsung"
+      },
+      {
+        "slug": "oppo",
+        "name": "Oppo"
+      },
+      {
+        "slug": "apple",
+        "name": "Apple"
+      },
+      {
+        "slug": "techno",
+        "name": "Tecno"
+      },
+      {
+        "slug": "realme",
+        "name": "Realme"
+      },
+      {
+        "slug": "infinix",
+        "name": "Infinix"
+      },
+      {
+        "slug": "xiaomi",
+        "name": "Xiaomi"
+      },
+      {
+        "slug": "vivo",
+        "name": "Vivo"
+      }
+    ]
+  },
+  {
+    "slug": "smartwatches",
+    "name": "Smart Watches",
+    "count": 0
+  },
+  {
+    "slug": "laptops",
+    "name": "Laptops",
+    "count": 0,
+    "brands": [
+      {
+        "slug": "hp",
+        "name": "HP"
+      },
+      {
+        "slug": "dell",
+        "name": "Dell"
+      },
+      {
+        "slug": "applelaptops",
+        "name": "Apple"
+      },
+      {
+        "slug": "ilife",
+        "name": "iLife"
+      },
+      {
+        "slug": "lenovo",
+        "name": "Lenovo"
+      }
+    ]
+  },
+  {
+    "slug": "tablet",
+    "name": "Tablets",
+    "count": 0,
+    "brands": [
+      {
+        "slug": "samsungtab",
+        "name": "Samsung"
+      },
+      {
+        "slug": "danytabs",
+        "name": "Dany"
+      },
+      {
+        "slug": "alcateltabs",
+        "name": "Alcatel"
+      },
+      {
+        "slug": "xiaomi-tablet",
+        "name": "Xiaomi"
+      }
+    ]
+  },
+  {
+    "slug": "accessories",
+    "name": "Accessories",
+    "count": 0,
+    "brands": [
+      {
+        "slug": "speakers",
+        "name": "Speakers"
+      },
+      {
+        "slug": "apple-doc",
+        "name": "Apple Dock"
+      },
+      {
+        "slug": "samsung-doc",
+        "name": "Samsung Dock"
+      },
+      {
+        "slug": "airpod",
+        "name": "Airpods"
+      },
+      {
+        "slug": "power-bank",
+        "name": "Power Bank"
+      },
+      {
+        "slug": "cables",
+        "name": "Cables"
+      },
+      {
+        "slug": "connector",
+        "name": "Connector"
+      },
+      {
+        "slug": "handsfree",
+        "name": "Handsfree"
+      }
+    ]
+  }
+]
