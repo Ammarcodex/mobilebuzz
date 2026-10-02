@@ -21,7 +21,7 @@ function SocialIcon({ children, label }: { children: React.ReactNode; label: str
     <a
       href="#"
       aria-label={label}
-      className="icon-btn flex h-[34px] w-[34px] items-center justify-center rounded-full bg-black/5 text-[#3a3a3d]"
+      className="icon-btn flex h-[34px] w-[34px] items-center justify-center rounded-full subtle-surface text-[#3a3a3d] dark:text-[#e5e5ea]"
     >
       {children}
     </a>
@@ -167,7 +167,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-black/10 pt-5 text-center text-xs text-subtle">
+        <div className="mt-8 border-t border-black/10 dark:border-white/10 pt-5 text-center text-xs text-subtle">
           © {new Date().getFullYear()} Mobile Buzz. All rights reserved.
         </div>
       </div>

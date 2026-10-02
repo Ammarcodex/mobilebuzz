@@ -41,7 +41,7 @@ export default function CartPage() {
             className="glass flex flex-col gap-4 rounded-3xl p-4 sm:flex-row sm:items-center sm:p-5"
           >
             <div className="flex items-center gap-4">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/50">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/90">
                 {item.image ? (
                   <Image
                     src={item.image}
@@ -71,7 +71,7 @@ export default function CartPage() {
                 type="button"
                 aria-label={`Remove ${item.name} from cart`}
                 onClick={() => removeItem(item.key)}
-                className="icon-btn flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-muted sm:hidden"
+                className="icon-btn flex h-9 w-9 shrink-0 items-center justify-center rounded-full subtle-surface text-muted sm:hidden"
               >
                 <svg
                   width="15"
@@ -100,7 +100,7 @@ export default function CartPage() {
                 type="button"
                 aria-label={`Remove ${item.name} from cart`}
                 onClick={() => removeItem(item.key)}
-                className="icon-btn hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-muted sm:flex"
+                className="icon-btn hidden h-9 w-9 shrink-0 items-center justify-center rounded-full subtle-surface text-muted sm:flex"
               >
                 <svg
                   width="15"

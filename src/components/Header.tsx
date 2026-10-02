@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Logo from "./Logo";
+import ThemeToggle from "./ThemeToggle";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { categories } from "@/lib/data";
@@ -101,7 +102,7 @@ export default function Header() {
           </svg>
           {BUSINESS.phonePrimary}
         </a>
-        <span className="h-3 w-px bg-[#d2d2d7]" />
+        <span className="h-3 w-px bg-[#d2d2d7] dark:bg-white/15" />
         <span>Cash on Delivery · Installments up to 12 months</span>
       </div>
 
@@ -139,7 +140,7 @@ export default function Header() {
                 type="button"
                 aria-label="Close search"
                 onClick={() => setSearchOpen(false)}
-                className="icon-btn flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/50 text-ink"
+                className="icon-btn flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/50 text-ink dark:bg-white/10"
               >
                 <svg
                   width="16"
@@ -177,11 +178,12 @@ export default function Header() {
               </nav>
 
               <div className="ml-auto flex flex-grow items-center justify-end gap-2 lg:flex-grow-0">
+                <ThemeToggle />
                 <button
                   type="button"
                   aria-label="Search"
                   onClick={() => setSearchOpen(true)}
-                  className="icon-btn flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink"
+                  className="icon-btn flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink dark:bg-white/10"
                 >
                   <svg
                     width="16"
@@ -200,7 +202,7 @@ export default function Header() {
                 <Link
                   href="/wishlist"
                   aria-label={`Wishlist, ${wishlistCount} items`}
-                  className="icon-btn relative flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink"
+                  className="icon-btn relative flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink dark:bg-white/10"
                 >
                   <HeartIcon />
                   <CountBadge n={wishlistCount} />
@@ -208,7 +210,7 @@ export default function Header() {
                 <Link
                   href="/cart"
                   aria-label={`Cart, ${cartCount} items`}
-                  className="icon-btn relative flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink"
+                  className="icon-btn relative flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink dark:bg-white/10"
                 >
                   <CartIcon />
                   <CountBadge n={cartCount} />
@@ -217,7 +219,7 @@ export default function Header() {
                   type="button"
                   aria-label="Toggle menu"
                   onClick={() => setMenuOpen((v) => !v)}
-                  className="icon-btn flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink lg:hidden"
+                  className="icon-btn flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink dark:bg-white/10 lg:hidden"
                 >
                   <svg
                     width="16"

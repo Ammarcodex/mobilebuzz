@@ -21,7 +21,7 @@ export default function DeleteProductButton({
       <input type="hidden" name="slug" value={slug} />
       <button
         type="submit"
-        className="icon-btn flex h-9 items-center justify-center rounded-full bg-black/5 px-4 text-xs font-bold text-accent-orange"
+        className="icon-btn flex h-9 items-center justify-center rounded-full subtle-surface px-4 text-xs font-bold text-accent-orange"
       >
         Delete
       </button>

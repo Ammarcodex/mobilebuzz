@@ -191,12 +191,12 @@ export default function CheckoutPage() {
           </div>
 
           {paymentMethod === "cod" ? (
-            <div className="rounded-2xl bg-black/[0.04] p-4 text-sm text-muted">
+            <div className="rounded-2xl subtle-surface p-4 text-sm text-muted">
               Pay <strong className="text-ink">{formatPrice(subtotal)}</strong>{" "}
               in cash when your order arrives — no card details needed.
             </div>
           ) : (
-            <div className="flex flex-col gap-4 rounded-2xl bg-black/[0.04] p-4">
+            <div className="flex flex-col gap-4 rounded-2xl subtle-surface p-4">
               <div>
                 <span className="mb-2 block text-sm font-semibold text-ink">
                   Plan Length
@@ -210,7 +210,7 @@ export default function CheckoutPage() {
                       className={`pill-solid rounded-full px-4 py-2 text-sm font-bold transition-colors ${
                         months === plan.months
                           ? "bg-accent text-white"
-                          : "bg-white/60 text-ink"
+                          : "bg-white/60 text-ink dark:bg-white/10"
                       }`}
                     >
                       {plan.months}mo
@@ -281,13 +281,13 @@ export default function CheckoutPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 flex justify-between border-t border-black/10 pt-4 text-base font-extrabold text-ink">
+          <div className="mt-4 flex justify-between border-t border-black/10 dark:border-white/10 pt-4 text-base font-extrabold text-ink">
             <span>Subtotal</span>
             <span>{formatPrice(subtotal)}</span>
           </div>
 
           {paymentMethod === "installment" ? (
-            <div className="mt-4 flex flex-col gap-2 border-t border-black/10 pt-4 text-sm">
+            <div className="mt-4 flex flex-col gap-2 border-t border-black/10 dark:border-white/10 pt-4 text-sm">
               <div className="flex justify-between text-muted">
                 <span>Installment markup ({months}mo)</span>
                 <span>+{formatPrice(breakdown.totalPayable - subtotal)}</span>
@@ -320,7 +320,7 @@ export default function CheckoutPage() {
             We opened WhatsApp with your order details below pre-filled.
             Please hit send there to confirm your order with us.
           </p>
-          <pre className="whitespace-pre-wrap rounded-2xl bg-black/[0.04] p-4 text-sm text-ink">
+          <pre className="whitespace-pre-wrap rounded-2xl subtle-surface p-4 text-sm text-ink">
             {summary}
           </pre>
           <button

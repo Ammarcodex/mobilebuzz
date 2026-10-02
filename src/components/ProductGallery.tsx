@@ -17,14 +17,16 @@ export default function ProductGallery({
     <div className="flex flex-col gap-3">
       <div className="glass flex h-[300px] items-center justify-center rounded-[32px] p-8 sm:h-[380px] sm:p-10">
         {current ? (
-          <Image
-            src={current}
-            alt={name}
-            width={380}
-            height={380}
-            unoptimized
-            className="max-h-[300px] max-w-full object-contain sm:max-h-[380px]"
-          />
+          <div className="flex h-full w-full items-center justify-center rounded-[20px] bg-white/90 p-6">
+            <Image
+              src={current}
+              alt={name}
+              width={380}
+              height={380}
+              unoptimized
+              className="max-h-[260px] max-w-full object-contain sm:max-h-[320px]"
+            />
+          </div>
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted">
             No image available
@@ -44,14 +46,16 @@ export default function ProductGallery({
                 i === active ? "ring-2 ring-accent" : ""
               }`}
             >
-              <Image
-                src={img}
-                alt=""
-                width={44}
-                height={44}
-                unoptimized
-                className="max-h-full max-w-full object-contain"
-              />
+              <div className="flex h-full w-full items-center justify-center rounded-lg bg-white/90 p-1">
+                <Image
+                  src={img}
+                  alt=""
+                  width={44}
+                  height={44}
+                  unoptimized
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
             </button>
           ))}
         </div>

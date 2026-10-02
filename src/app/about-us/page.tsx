@@ -22,7 +22,7 @@ export default function AboutUsPage() {
           Every product we sell is 100% genuine, sourced directly from
           authorized brand channels.
         </p>
-        <div className="grid grid-cols-1 gap-6 border-t border-black/10 pt-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 border-t border-black/10 dark:border-white/10 pt-6 sm:grid-cols-2">
           <div>
             <h2 className="m-0 mb-2 text-sm font-bold uppercase tracking-wide text-subtle">
               Visit Us

@@ -62,7 +62,7 @@ export default async function Home() {
                 (chip) => (
                   <span
                     key={chip}
-                    className="glass flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-[#3a3a3d]"
+                    className="glass flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-[#3a3a3d] dark:text-[#e5e5ea]"
                   >
                     {chip}
                   </span>
@@ -70,7 +70,7 @@ export default async function Home() {
               )}
             </div>
           </div>
-          <div className="relative flex items-center justify-center">
+          <div className="relative flex items-center justify-center rounded-[28px] bg-white/90 p-6">
             {hero?.image ? (
               <Image
                 src={hero.image}
@@ -183,7 +183,7 @@ export default async function Home() {
           {brands.map((brand) => (
             <div
               key={brand.name}
-              className="flex h-12 items-center justify-center"
+              className="flex h-12 items-center justify-center rounded-xl bg-white/90 p-2"
             >
               <Image
                 src={brand.logo}

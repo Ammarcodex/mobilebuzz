@@ -38,7 +38,7 @@ export default function CategoryCard({ category }: { category: Category }) {
   const empty = category.count === 0;
   const iconBg = category.slug === "smartphone" || category.slug === "smartwatches"
     ? category.slug === "smartphone" ? "rgba(0,113,227,0.12)" : "rgba(242,101,63,0.14)"
-    : "rgba(0,0,0,0.05)";
+    : "var(--subtle-surface)";
 
   return (
     <Link
@@ -48,7 +48,10 @@ export default function CategoryCard({ category }: { category: Category }) {
       }`}
     >
       {empty ? (
-        <span className="absolute right-[18px] top-[18px] rounded-full bg-black/[0.06] px-[9px] py-1 text-[10px] font-bold text-muted">
+        <span
+          className="absolute right-[18px] top-[18px] rounded-full px-[9px] py-1 text-[10px] font-bold text-muted"
+          style={{ background: "var(--subtle-surface-strong)" }}
+        >
           SOON
         </span>
       ) : null}

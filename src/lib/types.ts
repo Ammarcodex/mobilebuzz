@@ -17,9 +17,13 @@ export interface ProductColor {
   image?: string | null;
 }
 
-/** A selectable storage/GB button. `price` is the full price for that storage tier. */
+/**
+ * A selectable RAM+Storage configuration (e.g. "8GB / 128GB" vs "12GB / 256GB"),
+ * each with its own full price. Shown as a button labeled "{ram} - {rom}".
+ */
 export interface StorageOption {
-  label: string;
+  ram: string;
+  rom: string;
   price: number;
 }
 

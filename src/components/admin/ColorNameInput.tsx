@@ -41,7 +41,7 @@ export default function ColorNameInput({
                   onSelectSuggestion(s);
                   setOpen(false);
                 }}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm text-ink hover:bg-black/5"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm text-ink hover:bg-[var(--subtle-surface-strong)]"
               >
                 <span
                   className="h-5 w-5 shrink-0 rounded-full border border-black/10"

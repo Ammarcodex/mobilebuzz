@@ -78,7 +78,7 @@ export default function ShopClient({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search products…"
-          className="w-full rounded-full border border-black/10 bg-white/70 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent sm:min-w-[180px] sm:flex-1"
+          className="w-full rounded-full border border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent sm:min-w-[180px] sm:flex-1"
         />
         <div className="grid grid-cols-2 gap-3 sm:contents">
           <select
@@ -87,7 +87,7 @@ export default function ShopClient({
               setCategoryFilter(e.target.value);
               setBrandFilter("all");
             }}
-            className="w-full rounded-full border border-black/10 bg-white/70 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent sm:w-auto"
+            className="w-full rounded-full border border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent sm:w-auto"
           >
             <option value="all">All Categories</option>
             {categories.map((c) => (
@@ -99,7 +99,7 @@ export default function ShopClient({
           <select
             value={brandFilter}
             onChange={(e) => setBrandFilter(e.target.value)}
-            className="w-full rounded-full border border-black/10 bg-white/70 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent sm:w-auto"
+            className="w-full rounded-full border border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent sm:w-auto"
           >
             <option value="all">All Brands</option>
             {brandOptions.map((b) => (
@@ -112,7 +112,7 @@ export default function ShopClient({
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
-          className="w-full rounded-full border border-black/10 bg-white/70 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent sm:w-auto"
+          className="w-full rounded-full border border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent sm:w-auto"
         >
           <option value="featured">Sort: Featured</option>
           <option value="price-asc">Price: Low to High</option>

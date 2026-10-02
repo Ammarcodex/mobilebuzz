@@ -5,7 +5,9 @@ import Image from "next/image";
 import type { Category, Product, ProductColor, Spec, StorageOption } from "@/lib/types";
 import { createProductAction, updateProductAction } from "@/app/admin/actions";
 import ColorNameInput from "./ColorNameInput";
+import SelectWithOther from "./SelectWithOther";
 import { parseSpecText } from "@/lib/specParser";
+import { RAM_OPTIONS, STORAGE_OPTIONS } from "@/lib/phoneSpecOptions";
 
 function FormField({
   label,
@@ -39,6 +41,9 @@ export default function AdminProductForm({
   const [categorySlug, setCategorySlug] = useState(
     initialProduct?.category ?? ""
   );
+  const [brandName, setBrandName] = useState(initialProduct?.brandName ?? "");
+  const [ram, setRam] = useState(initialProduct?.ram ?? "");
+  const [rom, setRom] = useState(initialProduct?.rom ?? "");
   const [specs, setSpecs] = useState<Spec[]>(initialProduct?.specs ?? []);
   const [pasteText, setPasteText] = useState("");
   const [pasteResultCount, setPasteResultCount] = useState<number | null>(
@@ -62,7 +67,19 @@ export default function AdminProductForm({
     [categories, categorySlug]
   );
   const categoryName = selectedCategory?.name ?? "";
-  const brandSuggestions = selectedCategory?.brands ?? [];
+
+  // Brand options are scoped to the selected category (e.g. Smartphones ->
+  // Samsung/Apple/Tecno/...), not pooled across every category — Accessories'
+  // "brands" are actually product types (Cables, Docks, ...), not real brands.
+  // Before a category is picked, default to Smartphones since that's what
+  // this admin is for most of the time.
+  const brandOptions = useMemo(() => {
+    const brands =
+      selectedCategory?.brands ??
+      categories.find((c) => c.slug === "smartphone")?.brands ??
+      [];
+    return brands.map((b) => b.name);
+  }, [categories, selectedCategory]);
 
   function handleParseSpecs() {
     const parsed = parseSpecText(pasteText);
@@ -132,19 +149,14 @@ export default function AdminProductForm({
           </FormField>
 
           <FormField label="Brand">
-            <input
+            <SelectWithOther
               name="brand"
-              type="text"
-              list="brand-suggestions"
-              defaultValue={initialProduct?.brandName ?? ""}
-              placeholder="e.g. Samsung"
-              className="input"
+              value={brandName}
+              onChange={setBrandName}
+              options={brandOptions}
+              placeholder="Type brand name"
+              emptyLabel="Select brand…"
             />
-            <datalist id="brand-suggestions">
-              {brandSuggestions.map((b) => (
-                <option key={b.slug} value={b.name} />
-              ))}
-            </datalist>
           </FormField>
         </div>
 
@@ -161,21 +173,21 @@ export default function AdminProductForm({
             />
           </FormField>
           <FormField label="RAM">
-            <input
+            <SelectWithOther
               name="ram"
-              type="text"
-              defaultValue={initialProduct?.ram ?? ""}
-              placeholder="e.g. 8GB"
-              className="input"
+              value={ram}
+              onChange={setRam}
+              options={RAM_OPTIONS}
+              placeholder="e.g. 8"
             />
           </FormField>
           <FormField label="Storage (ROM)">
-            <input
+            <SelectWithOther
               name="rom"
-              type="text"
-              defaultValue={initialProduct?.rom ?? ""}
-              placeholder="e.g. 128GB"
-              className="input"
+              value={rom}
+              onChange={setRom}
+              options={STORAGE_OPTIONS}
+              placeholder="e.g. 128"
             />
           </FormField>
         </div>
@@ -222,7 +234,7 @@ export default function AdminProductForm({
             {existingImages.map((img) => (
               <label
                 key={img}
-                className="relative flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-xl bg-white/50 p-1 text-center"
+                className="relative flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-xl bg-white/90 p-1 text-center"
               >
                 <Image
                   src={img}
@@ -268,7 +280,7 @@ export default function AdminProductForm({
             onClick={() =>
               setStorageOptions((prev) => [
                 ...prev,
-                { label: "", price: initialProduct?.price ?? 0 },
+                { ram: "", rom: "", price: initialProduct?.price ?? 0 },
               ])
             }
             className="pill-glass glass rounded-full px-4 py-2 text-xs font-bold text-ink"
@@ -277,33 +289,50 @@ export default function AdminProductForm({
           </button>
         </div>
         <p className="m-0 text-xs text-muted">
-          Shown as buttons on the product page (e.g. 128GB, 256GB). Enter the
-          full selling price for each option — not an adjustment on top of
-          the base price. If you add any options here, the base Price field
-          above is only used as a fallback (e.g. for the shop grid) and is
-          not shown on the product page itself.
+          Each option is a RAM + Storage combo with its own price, shown as a
+          button like &quot;8 - 128&quot; or &quot;12 - 256&quot;. Enter the
+          full selling price for each — not an adjustment on top of the base
+          price. If you add any options here, the base Price field above is
+          only used as a fallback (e.g. for the shop grid) and is not shown
+          on the product page itself.
         </p>
         {storageOptions.map((option, i) => (
           <div key={i} className="flex flex-wrap items-end gap-3">
-            <div className="min-w-[140px] flex-1">
+            <div className="w-32">
               <span className="mb-1.5 block text-sm font-semibold text-ink">
-                Label
+                RAM
               </span>
-              <input
-                type="text"
-                value={option.label}
-                onChange={(e) =>
+              <SelectWithOther
+                value={option.ram}
+                onChange={(value) =>
                   setStorageOptions((prev) =>
                     prev.map((o, idx) =>
-                      idx === i ? { ...o, label: e.target.value } : o
+                      idx === i ? { ...o, ram: value } : o
                     )
                   )
                 }
-                placeholder="e.g. 256GB"
-                className="input"
+                options={RAM_OPTIONS}
+                placeholder="e.g. 8"
               />
             </div>
-            <div className="w-36">
+            <div className="w-32">
+              <span className="mb-1.5 block text-sm font-semibold text-ink">
+                Storage
+              </span>
+              <SelectWithOther
+                value={option.rom}
+                onChange={(value) =>
+                  setStorageOptions((prev) =>
+                    prev.map((o, idx) =>
+                      idx === i ? { ...o, rom: value } : o
+                    )
+                  )
+                }
+                options={STORAGE_OPTIONS}
+                placeholder="e.g. 128"
+              />
+            </div>
+            <div className="w-36 flex-1">
               <span className="mb-1.5 block text-sm font-semibold text-ink">
                 Price for this option
               </span>
@@ -327,7 +356,7 @@ export default function AdminProductForm({
               onClick={() =>
                 setStorageOptions((prev) => prev.filter((_, idx) => idx !== i))
               }
-              className="icon-btn flex h-11 items-center justify-center rounded-full bg-black/5 px-4 text-xs font-bold text-accent-orange"
+              className="icon-btn flex h-11 items-center justify-center rounded-full subtle-surface px-4 text-xs font-bold text-accent-orange"
             >
               Remove
             </button>
@@ -391,7 +420,7 @@ export default function AdminProductForm({
               onClick={() =>
                 setColors((prev) => prev.filter((_, idx) => idx !== i))
               }
-              className="icon-btn flex h-11 items-center justify-center rounded-full bg-black/5 px-4 text-xs font-bold text-accent-orange"
+              className="icon-btn flex h-11 items-center justify-center rounded-full subtle-surface px-4 text-xs font-bold text-accent-orange"
             >
               Remove
             </button>
@@ -413,7 +442,7 @@ export default function AdminProductForm({
           </button>
         </div>
 
-        <div className="rounded-2xl bg-black/[0.04] p-4">
+        <div className="rounded-2xl subtle-surface p-4">
           <span className="mb-1.5 block text-sm font-semibold text-ink">
             Paste Specs From Anywhere
           </span>
@@ -485,7 +514,7 @@ export default function AdminProductForm({
               onClick={() =>
                 setSpecs((prev) => prev.filter((_, idx) => idx !== i))
               }
-              className="icon-btn flex h-11 items-center justify-center rounded-full bg-black/5 px-4 text-xs font-bold text-accent-orange"
+              className="icon-btn flex h-11 items-center justify-center rounded-full subtle-surface px-4 text-xs font-bold text-accent-orange"
             >
               Remove
             </button>

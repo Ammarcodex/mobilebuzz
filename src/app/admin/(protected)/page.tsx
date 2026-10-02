@@ -38,7 +38,7 @@ export default async function AdminDashboardPage() {
               key={product.slug}
               className="glass flex flex-wrap items-center gap-4 rounded-2xl p-4"
             >
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/50">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/90">
                 {product.image ? (
                   <Image
                     src={product.image}

@@ -44,7 +44,7 @@ export default function InstallmentCalculator({ price }: { price: number }) {
             className={`pill-solid rounded-full px-4 py-2 text-sm font-bold transition-colors ${
               months === plan.months
                 ? "bg-accent text-white"
-                : "bg-white/60 text-ink"
+                : "bg-white/60 text-ink dark:bg-white/10"
             }`}
           >
             {plan.months}mo
@@ -62,7 +62,7 @@ export default function InstallmentCalculator({ price }: { price: number }) {
           value={downPayment || ""}
           onChange={(e) => setDownPayment(Number(e.target.value) || 0)}
           placeholder="0"
-          className="w-full rounded-xl border border-black/10 bg-white/70 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent"
+          className="w-full rounded-xl border border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent"
         />
       </label>
 

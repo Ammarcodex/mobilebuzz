@@ -32,11 +32,16 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   const selectedColor = hasColors ? product.colors![colorIndex] : undefined;
 
   const effectivePrice = selectedStorage?.price ?? product.price;
+  const effectiveRam = selectedStorage?.ram ?? product.ram;
+  const effectiveRom = selectedStorage?.rom ?? product.rom;
 
   const effectiveImage = selectedColor?.image || product.image;
   const wishlisted = isWishlisted(product.slug);
 
-  const variantLabel = [selectedStorage?.label, selectedColor?.name]
+  const storageVariantLabel = selectedStorage
+    ? `${selectedStorage.ram} - ${selectedStorage.rom}`
+    : undefined;
+  const variantLabel = [storageVariantLabel, selectedColor?.name]
     .filter(Boolean)
     .join(" / ");
 
@@ -61,11 +66,11 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
     <div className="flex flex-col gap-5">
       <div className="flex items-baseline gap-3">
         <PriceTag price={effectivePrice} className="text-2xl" />
-        {(product.ram || product.rom) && (
+        {(effectiveRam || effectiveRom) && (
           <span className="text-sm text-muted">
-            {product.ram ? `${product.ram} RAM` : ""}
-            {product.ram && product.rom ? " · " : ""}
-            {product.rom ? `${product.rom} Storage` : ""}
+            {effectiveRam ? `${effectiveRam} RAM` : ""}
+            {effectiveRam && effectiveRom ? " · " : ""}
+            {effectiveRom ? `${effectiveRom} Storage` : ""}
           </span>
         )}
       </div>
@@ -78,14 +83,16 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
           <div className="flex flex-wrap gap-2">
             {sortedStorageOptions.map((option, i) => (
               <button
-                key={`${option.label}-${i}`}
+                key={`${option.ram}-${option.rom}-${i}`}
                 type="button"
                 onClick={() => setStorageIndex(i)}
-                className={`pill-glass glass rounded-full px-4 py-2 text-sm font-semibold ${
-                  i === storageIndex ? "ring-2 ring-accent" : ""
+                className={`pill-solid rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                  i === storageIndex
+                    ? "bg-accent text-white"
+                    : "pill-glass glass text-ink"
                 }`}
               >
-                {option.label}
+                {option.ram} - {option.rom}
               </button>
             ))}
           </div>

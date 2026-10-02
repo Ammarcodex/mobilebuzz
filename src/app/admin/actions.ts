@@ -113,8 +113,12 @@ async function buildProductFromFormData(
     formData,
     "storageOptionsJson"
   )
-    .filter((o) => o.label?.trim())
-    .map((o) => ({ label: o.label.trim(), price: Number(o.price) || 0 }));
+    .filter((o) => o.ram?.trim() && o.rom?.trim())
+    .map((o) => ({
+      ram: o.ram.trim(),
+      rom: o.rom.trim(),
+      price: Number(o.price) || 0,
+    }));
 
   return {
     slug: "", // set by caller
