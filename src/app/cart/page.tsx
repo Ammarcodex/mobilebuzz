@@ -41,7 +41,7 @@ export default function CartPage() {
             className="glass flex flex-col gap-4 rounded-3xl p-4 sm:flex-row sm:items-center sm:p-5"
           >
             <div className="flex items-center gap-4">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/90">
+              <div className="photo-surface flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl">
                 {item.image ? (
                   <Image
                     src={item.image}

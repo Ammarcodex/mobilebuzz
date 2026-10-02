@@ -17,7 +17,7 @@ export default function ProductGallery({
     <div className="flex flex-col gap-3">
       <div className="glass flex h-[300px] items-center justify-center rounded-[32px] p-8 sm:h-[380px] sm:p-10">
         {current ? (
-          <div className="flex h-full w-full items-center justify-center rounded-[20px] bg-white/90 p-6">
+          <div className="photo-surface flex h-full w-full items-center justify-center rounded-[20px] p-6">
             <Image
               src={current}
               alt={name}
@@ -46,7 +46,7 @@ export default function ProductGallery({
                 i === active ? "ring-2 ring-accent" : ""
               }`}
             >
-              <div className="flex h-full w-full items-center justify-center rounded-lg bg-white/90 p-1">
+              <div className="photo-surface flex h-full w-full items-center justify-center rounded-lg p-1">
                 <Image
                   src={img}
                   alt=""

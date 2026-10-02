@@ -73,7 +73,7 @@ export default function ProductCard({
       href={`/product/${product.slug}`}
       className="glass glass-card flex flex-col overflow-hidden rounded-[26px]"
     >
-      <div className="relative flex h-[210px] items-center justify-center rounded-t-[26px] bg-white/90 p-5">
+      <div className="photo-surface relative flex h-[210px] items-center justify-center rounded-t-[26px] p-5">
         {effectiveBadge ? (
           <span
             className="absolute left-3.5 top-3.5 rounded-full px-2.5 py-1 text-[11px] font-bold text-white"

@@ -1,10 +1,18 @@
 // Client-side background removal: samples the background color from the
-// photo's four corners and makes closely-matching pixels transparent, with
-// a feathered edge so the cutout doesn't look jagged. This works well for
-// studio product photos shot on a solid white/light background (the norm
-// for phone catalog photos) — it won't help with busy or gradient
-// backgrounds, since there's no real subject/background segmentation here,
-// just a color-distance cutout.
+// photo's border and flood-fills inward from the edges, making only pixels
+// *connected* to the border through a chain of background-colored pixels
+// transparent (with a feathered edge so the cutout doesn't look jagged).
+//
+// Flood-filling from the border (rather than a plain global color-distance
+// cutoff) matters a lot for white/silver phones shot on a white background:
+// the product itself is then nearly the same color as the background, so a
+// global cutoff erases chunks of the product too. A flood fill can't "jump"
+// into the product unless the product's own edge is also indistinguishable
+// from the background — in practice there's always at least a faint edge or
+// shadow line separating them, which is enough to stop the fill.
+//
+// This still won't help with busy or gradient backgrounds, since there's no
+// real subject/background segmentation here, just a color-distance cutout.
 //
 // Also downsizes to a sane max dimension and re-encodes as WebP (which,
 // unlike JPEG, supports transparency) to keep the result small enough for
@@ -30,6 +38,95 @@ function loadImage(file: File): Promise<HTMLImageElement> {
   });
 }
 
+/** Mutates `data`'s alpha channel in place. Pure pixel math, no DOM/Canvas
+ * dependency, so it can be unit-tested outside a browser. */
+export function cutoutBackground(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number
+): void {
+  if (width <= 0 || height <= 0) return;
+
+  // Average the full border (not just the 4 corners) for a more reliable
+  // background color sample.
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  let n = 0;
+  const addSample = (x: number, y: number) => {
+    const i = (y * width + x) * 4;
+    r += data[i];
+    g += data[i + 1];
+    b += data[i + 2];
+    n++;
+  };
+  for (let x = 0; x < width; x++) {
+    addSample(x, 0);
+    addSample(x, height - 1);
+  }
+  for (let y = 0; y < height; y++) {
+    addSample(0, y);
+    addSample(width - 1, y);
+  }
+  r /= n;
+  g /= n;
+  b /= n;
+
+  const colorDistance = (i: number) => {
+    const dr = data[i] - r;
+    const dg = data[i + 1] - g;
+    const db = data[i + 2] - b;
+    return Math.sqrt(dr * dr + dg * dg + db * db);
+  };
+
+  // Flood fill from every border pixel through connected background-colored
+  // pixels. A stack-based (DFS) fill avoids recursion depth limits on large
+  // images; fill order doesn't matter for the result.
+  const visited = new Uint8Array(width * height);
+  const isBackground = new Uint8Array(width * height);
+  const stack: number[] = [];
+
+  const visit = (x: number, y: number) => {
+    if (x < 0 || x >= width || y < 0 || y >= height) return;
+    const idx = y * width + x;
+    if (visited[idx]) return;
+    visited[idx] = 1;
+    if (colorDistance(idx * 4) < THRESHOLD + FEATHER) {
+      isBackground[idx] = 1;
+      stack.push(idx);
+    }
+  };
+
+  for (let x = 0; x < width; x++) {
+    visit(x, 0);
+    visit(x, height - 1);
+  }
+  for (let y = 0; y < height; y++) {
+    visit(0, y);
+    visit(width - 1, y);
+  }
+
+  while (stack.length > 0) {
+    const idx = stack.pop() as number;
+    const x = idx % width;
+    const y = (idx / width) | 0;
+    visit(x + 1, y);
+    visit(x - 1, y);
+    visit(x, y + 1);
+    visit(x, y - 1);
+  }
+
+  for (let idx = 0; idx < isBackground.length; idx++) {
+    if (!isBackground[idx]) continue;
+    const i = idx * 4;
+    const distance = colorDistance(i);
+    data[i + 3] =
+      distance < THRESHOLD
+        ? 0
+        : Math.round(((distance - THRESHOLD) / FEATHER) * 255);
+  }
+}
+
 async function process(file: File): Promise<File> {
   const img = await loadImage(file);
 
@@ -45,39 +142,7 @@ async function process(file: File): Promise<File> {
 
   ctx.drawImage(img, 0, 0, width, height);
   const imageData = ctx.getImageData(0, 0, width, height);
-  const { data } = imageData;
-
-  const corners = [
-    [0, 0],
-    [width - 1, 0],
-    [0, height - 1],
-    [width - 1, height - 1],
-  ];
-  let r = 0;
-  let g = 0;
-  let b = 0;
-  for (const [x, y] of corners) {
-    const i = (y * width + x) * 4;
-    r += data[i];
-    g += data[i + 1];
-    b += data[i + 2];
-  }
-  r /= corners.length;
-  g /= corners.length;
-  b /= corners.length;
-
-  for (let i = 0; i < data.length; i += 4) {
-    const dr = data[i] - r;
-    const dg = data[i + 1] - g;
-    const db = data[i + 2] - b;
-    const distance = Math.sqrt(dr * dr + dg * dg + db * db);
-    if (distance < THRESHOLD) {
-      data[i + 3] = 0;
-    } else if (distance < THRESHOLD + FEATHER) {
-      data[i + 3] = Math.round(((distance - THRESHOLD) / FEATHER) * 255);
-    }
-  }
-
+  cutoutBackground(imageData.data, width, height);
   ctx.putImageData(imageData, 0, 0);
 
   const blob = await new Promise<Blob | null>((resolve) =>

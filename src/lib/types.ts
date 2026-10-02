@@ -10,11 +10,10 @@ export interface Spec {
   value: string;
 }
 
-/** A selectable color swatch. `image` optionally overrides the product photo. */
+/** A selectable color swatch — just a name/hex pair shown as a swatch. */
 export interface ProductColor {
   name: string;
   hex: string;
-  image?: string | null;
 }
 
 /**

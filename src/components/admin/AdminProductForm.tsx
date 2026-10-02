@@ -89,6 +89,12 @@ export default function AdminProductForm({
     );
   }
 
+  function updateColor(index: number, patch: Partial<ProductColor>) {
+    setColors((prev) =>
+      prev.map((c, idx) => (idx === index ? { ...c, ...patch } : c))
+    );
+  }
+
   function handleParseSpecs() {
     const parsed = parseSpecText(pasteText);
     setSpecs((prev) => {
@@ -242,7 +248,7 @@ export default function AdminProductForm({
             {existingImages.map((img) => (
               <label
                 key={img}
-                className="relative flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-xl bg-white/90 p-1 text-center"
+                className="photo-surface relative flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-xl p-1 text-center"
               >
                 <Image
                   src={img}
@@ -411,31 +417,18 @@ export default function AdminProductForm({
             <input
               type="color"
               value={color.hex}
-              onChange={(e) =>
-                setColors((prev) =>
-                  prev.map((c, idx) =>
-                    idx === i ? { ...c, hex: e.target.value } : c
-                  )
-                )
-              }
+              onChange={(e) => updateColor(i, { hex: e.target.value })}
               className="h-11 w-14 rounded-lg border border-black/10 bg-transparent"
             />
             <div className="min-w-[180px] flex-1">
               <ColorNameInput
                 value={color.name}
-                onChange={(name) =>
-                  setColors((prev) =>
-                    prev.map((c, idx) => (idx === i ? { ...c, name } : c))
-                  )
-                }
+                onChange={(name) => updateColor(i, { name })}
                 onSelectSuggestion={(suggestion) =>
-                  setColors((prev) =>
-                    prev.map((c, idx) =>
-                      idx === i
-                        ? { ...c, name: suggestion.name, hex: suggestion.hex }
-                        : c
-                    )
-                  )
+                  updateColor(i, {
+                    name: suggestion.name,
+                    hex: suggestion.hex,
+                  })
                 }
               />
             </div>

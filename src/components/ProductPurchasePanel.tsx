@@ -37,7 +37,6 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   const effectiveRam = selectedStorage?.ram ?? product.ram;
   const effectiveRom = selectedStorage?.rom ?? product.rom;
 
-  const effectiveImage = selectedColor?.image || product.image;
   const wishlisted = isWishlisted(product.slug);
 
   // Only call out PTA status (on buttons and in the cart line item) once the
@@ -67,7 +66,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
         key,
         slug: product.slug,
         name: product.name,
-        image: effectiveImage,
+        image: product.image,
         price: effectivePrice,
         variantLabel: variantLabel || undefined,
       },
@@ -221,20 +220,6 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
       ) : null}
 
       <InstallmentCalculator price={effectivePrice} />
-
-      {/* Sticky mobile CTA so "Add to Cart" stays reachable without scrolling
-          back up on long product pages. Stops short of the right edge so it
-          never sits under the floating WhatsApp button. */}
-      <div className="glass fixed inset-x-0 bottom-0 right-24 z-40 flex items-center justify-between gap-3 rounded-t-2xl px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden">
-        <PriceTag price={effectivePrice} className="text-lg" />
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          className="pill-solid flex-1 rounded-full bg-accent px-6 py-3 text-sm font-bold text-white shadow-[0_10px_24px_rgba(0,113,227,0.35)]"
-        >
-          Add to Cart
-        </button>
-      </div>
     </div>
   );
 }

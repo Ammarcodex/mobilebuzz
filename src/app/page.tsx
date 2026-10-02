@@ -10,6 +10,8 @@ import {
 import ProductCard from "@/components/ProductCard";
 import CategoryCard from "@/components/CategoryCard";
 import BrandMarquee from "@/components/BrandMarquee";
+import TypewriterText from "@/components/TypewriterText";
+import Reveal from "@/components/Reveal";
 import { formatPrice, getDisplayPrice } from "@/lib/format";
 import { INSTALLMENT_PLANS } from "@/lib/installment";
 
@@ -32,17 +34,35 @@ export default async function Home() {
       <div className="mx-auto max-w-[1240px] px-6 pt-10">
         <div className="glass grid grid-cols-1 items-center gap-10 overflow-hidden rounded-[40px] p-8 sm:p-12 lg:grid-cols-2 lg:p-16">
           <div className="flex flex-col gap-5">
-            <span className="text-[13px] font-bold tracking-[0.05em] text-accent">
+            <span
+              className="hero-in text-[13px] font-bold tracking-[0.05em] text-accent"
+              style={{ "--hero-in-delay": "0ms" } as React.CSSProperties}
+            >
               {hero ? "NEW ARRIVAL" : "WELCOME"}
             </span>
-            <h1 className="m-0 text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-5xl">
-              {hero ? `The ${hero.name} has arrived.` : "Genuine Phones, Great Prices."}
+            <h1
+              className="hero-in m-0 text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-5xl"
+              style={{ "--hero-in-delay": "80ms" } as React.CSSProperties}
+            >
+              <TypewriterText
+                text={
+                  hero
+                    ? `The ${hero.name} has arrived.`
+                    : "Genuine Phones, Great Prices."
+                }
+              />
             </h1>
-            <p className="m-0 max-w-[440px] text-[17px] leading-[1.6] text-muted">
+            <p
+              className="hero-in m-0 max-w-[440px] text-[17px] leading-[1.6] text-muted"
+              style={{ "--hero-in-delay": "160ms" } as React.CSSProperties}
+            >
               Genuine smartphones and smartwatches in Karachi — cash on
               delivery, plus easy monthly installments up to 12 months.
             </p>
-            <div className="mt-2 flex flex-wrap gap-3">
+            <div
+              className="hero-in mt-2 flex flex-wrap gap-3"
+              style={{ "--hero-in-delay": "240ms" } as React.CSSProperties}
+            >
               {hero ? (
                 <Link
                   href={`/product/${hero.slug}`}
@@ -58,7 +78,10 @@ export default async function Home() {
                 Browse Smartphones
               </Link>
             </div>
-            <div className="mt-3.5 flex flex-wrap gap-2.5">
+            <div
+              className="hero-in mt-3.5 flex flex-wrap gap-2.5"
+              style={{ "--hero-in-delay": "320ms" } as React.CSSProperties}
+            >
               {["Cash on Delivery", "12-Month Installments", "100% Genuine"].map(
                 (chip) => (
                   <span
@@ -71,7 +94,10 @@ export default async function Home() {
               )}
             </div>
           </div>
-          <div className="relative flex items-center justify-center rounded-[28px] bg-white/90 p-6">
+          <div
+            className="hero-in photo-surface relative flex items-center justify-center rounded-[28px] p-6"
+            style={{ "--hero-in-delay": "120ms" } as React.CSSProperties}
+          >
             {hero?.image ? (
               <Image
                 src={hero.image}
@@ -93,13 +119,13 @@ export default async function Home() {
       </div>
 
       {/* Category tiles */}
-      <div className="mx-auto max-w-[1240px] px-6 pt-12">
+      <Reveal className="mx-auto max-w-[1240px] px-6 pt-12">
         <div className="grid grid-cols-2 gap-[18px] lg:grid-cols-4">
           {categories.map((category) => (
             <CategoryCard key={category.slug} category={category} />
           ))}
         </div>
-      </div>
+      </Reveal>
 
       {/* New Arrivals */}
       {newArrivals.length > 0 ? (
@@ -124,7 +150,7 @@ export default async function Home() {
       ) : null}
 
       {/* Installment banner */}
-      <div className="mx-auto mt-14 max-w-[1240px] px-6">
+      <Reveal className="mx-auto mt-14 max-w-[1240px] px-6">
         <div className="glass-dark flex flex-wrap items-center justify-between gap-6 rounded-[32px] p-9">
           <div className="flex items-center gap-4.5">
             <span className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-2xl bg-white/10">
@@ -162,7 +188,7 @@ export default async function Home() {
             Installment Procedure
           </Link>
         </div>
-      </div>
+      </Reveal>
 
       {/* Featured Products */}
       {featured.length > 0 ? (
@@ -176,12 +202,12 @@ export default async function Home() {
       ) : null}
 
       {/* Brand strip */}
-      <div className="mx-auto max-w-[1240px] px-6 pt-14">
+      <Reveal className="mx-auto max-w-[1240px] px-6 pt-14">
         <h2 className="m-0 mb-6 text-center text-xl font-extrabold text-ink">
           Our Authorized Brands
         </h2>
         <BrandMarquee brands={brands} />
-      </div>
+      </Reveal>
     </div>
   );
 }
@@ -196,7 +222,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pt-14">
+    <Reveal className="mx-auto max-w-[1240px] px-6 pt-14">
       <div className="mb-[22px] flex items-baseline justify-between">
         <h2 className="m-0 text-[28px] font-extrabold tracking-tight text-ink">
           {title}
@@ -206,7 +232,7 @@ function Section({
         </Link>
       </div>
       {children}
-    </div>
+    </Reveal>
   );
 }
 
