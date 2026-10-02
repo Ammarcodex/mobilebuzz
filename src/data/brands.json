@@ -1,38 +1,38 @@
 [
   {
     "name": "Apple",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/apple_logo_PNG19670.png"
+    "logo": "/brand-logos/apple.webp"
   },
   {
     "name": "Samsung",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/1280px-Samsung_Logo.svg.png"
+    "logo": "/brand-logos/samsung.webp"
   },
   {
     "name": "Oppo",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/OPPO_LOGO_2019.png"
+    "logo": "/brand-logos/oppo.webp"
   },
   {
     "name": "Vivo",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/Vivo_mobile_logo.png"
+    "logo": "/brand-logos/vivo.webp"
   },
   {
     "name": "Infinix",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/Infinix-Logo.png"
+    "logo": "/brand-logos/infinix.webp"
   },
   {
     "name": "Honor",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/Honor-Logo.png"
+    "logo": "/brand-logos/honor.webp"
   },
   {
     "name": "Huawei",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/huawi.png"
+    "logo": "/brand-logos/huawei.webp"
   },
   {
     "name": "HP",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/HP_logo_630x630.png"
+    "logo": "/brand-logos/hp.webp"
   },
   {
     "name": "Nokia",
-    "logo": "https://mobilenbazaar.com/wp-content/uploads/2019/09/nokia.png"
+    "logo": "/brand-logos/nokia.webp"
   }
 ]

@@ -2,17 +2,19 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import type { Product } from "@/lib/types";
+import type { Product, StorageOption } from "@/lib/types";
 import { getDisplayPrice } from "@/lib/format";
 import PriceTag from "./PriceTag";
 import QuantityInput from "./QuantityInput";
 import InstallmentCalculator from "./InstallmentCalculator";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function ProductPurchasePanel({ product }: { product: Product }) {
   const { addItem } = useCart();
   const { toggleItem, isWishlisted } = useWishlist();
+  const { showToast } = useToast();
   const [storageIndex, setStorageIndex] = useState(0);
   const [colorIndex, setColorIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -38,10 +40,23 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   const effectiveImage = selectedColor?.image || product.image;
   const wishlisted = isWishlisted(product.slug);
 
+  // Only call out PTA status (on buttons and in the cart line item) once the
+  // admin has actually listed a non-PTA option somewhere — otherwise every
+  // button would redundantly say "(PTA Approved)" with nothing to contrast it against.
+  const hasNonPtaOption = sortedStorageOptions.some(
+    (o) => o.ptaStatus === "non-pta"
+  );
+  const ptaLabel = (status: StorageOption["ptaStatus"]) =>
+    status === "non-pta" ? "Non-PTA" : "PTA Approved";
+
   const storageVariantLabel = selectedStorage
     ? `${selectedStorage.ram} - ${selectedStorage.rom}`
     : undefined;
-  const variantLabel = [storageVariantLabel, selectedColor?.name]
+  const variantLabel = [
+    storageVariantLabel,
+    hasNonPtaOption ? ptaLabel(selectedStorage?.ptaStatus) : undefined,
+    selectedColor?.name,
+  ]
     .filter(Boolean)
     .join(" / ");
 
@@ -62,9 +77,24 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
     setTimeout(() => setJustAdded(false), 2000);
   }
 
+  function handleWishlist() {
+    const willBeWishlisted = !wishlisted;
+    toggleItem({
+      slug: product.slug,
+      name: product.name,
+      image: product.image,
+      price: getDisplayPrice(product),
+    });
+    showToast(
+      willBeWishlisted
+        ? `Added "${product.name}" to wishlist`
+        : `Removed "${product.name}" from wishlist`
+    );
+  }
+
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-baseline gap-3">
+      <div className="flex flex-wrap items-baseline gap-3">
         <PriceTag price={effectivePrice} className="text-2xl" />
         {(effectiveRam || effectiveRom) && (
           <span className="text-sm text-muted">
@@ -73,6 +103,17 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             {effectiveRom ? `${effectiveRom} Storage` : ""}
           </span>
         )}
+        {hasNonPtaOption && selectedStorage ? (
+          <span
+            className={`pill-glass glass rounded-full px-2.5 py-1 text-xs font-bold ${
+              selectedStorage.ptaStatus === "non-pta"
+                ? "text-accent-orange"
+                : "text-accent"
+            }`}
+          >
+            {ptaLabel(selectedStorage.ptaStatus)}
+          </span>
+        ) : null}
       </div>
 
       {hasStorageOptions ? (
@@ -93,6 +134,11 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
                 }`}
               >
                 {option.ram} - {option.rom}
+                {hasNonPtaOption ? (
+                  <span className="ml-1 text-[10px] font-semibold opacity-80">
+                    ({ptaLabel(option.ptaStatus)})
+                  </span>
+                ) : null}
               </button>
             ))}
           </div>
@@ -141,14 +187,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
         </button>
         <button
           type="button"
-          onClick={() =>
-            toggleItem({
-              slug: product.slug,
-              name: product.name,
-              image: product.image,
-              price: getDisplayPrice(product),
-            })
-          }
+          onClick={handleWishlist}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
           className="icon-btn glass flex h-12 w-12 items-center justify-center rounded-full"
         >
@@ -182,6 +221,20 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
       ) : null}
 
       <InstallmentCalculator price={effectivePrice} />
+
+      {/* Sticky mobile CTA so "Add to Cart" stays reachable without scrolling
+          back up on long product pages. Stops short of the right edge so it
+          never sits under the floating WhatsApp button. */}
+      <div className="glass fixed inset-x-0 bottom-0 right-24 z-40 flex items-center justify-between gap-3 rounded-t-2xl px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden">
+        <PriceTag price={effectivePrice} className="text-lg" />
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className="pill-solid flex-1 rounded-full bg-accent px-6 py-3 text-sm font-bold text-white shadow-[0_10px_24px_rgba(0,113,227,0.35)]"
+        >
+          Add to Cart
+        </button>
+      </div>
     </div>
   );
 }

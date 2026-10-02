@@ -36,7 +36,7 @@ export default async function ProductPage({
       : [];
 
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pb-16 pt-10">
+    <div className="mx-auto max-w-[1240px] px-6 pb-28 pt-10 lg:pb-16">
       <div className="mb-6">
         <Breadcrumbs
           items={[

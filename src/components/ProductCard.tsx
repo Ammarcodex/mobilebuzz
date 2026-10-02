@@ -7,18 +7,37 @@ import { getDisplayPrice } from "@/lib/format";
 import PriceTag from "./PriceTag";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function ProductCard({
   product,
   badge,
 }: {
   product: Product;
-  badge?: "new" | "hot";
+  badge?: "new" | "hot" | "featured";
 }) {
   const { addItem } = useCart();
   const { toggleItem, isWishlisted } = useWishlist();
+  const { showToast } = useToast();
   const wishlisted = isWishlisted(product.slug);
-  const accent = badge === "hot" ? "#f2653f" : "#0071e3";
+  // Homepage sections pass an explicit badge ("new" for New Arrivals, "hot"
+  // for the Hot Deals strip); everywhere else (shop grid, category pages,
+  // related products) derive it from the product's own admin-set flags so
+  // hot deal/featured items are still called out wherever they appear.
+  const effectiveBadge =
+    badge ?? (product.isHotDeal ? "hot" : product.isFeatured ? "featured" : undefined);
+  const accent =
+    effectiveBadge === "hot"
+      ? "#f2653f"
+      : effectiveBadge === "featured"
+        ? "#f5a623"
+        : "#0071e3";
+  const badgeLabel =
+    effectiveBadge === "hot"
+      ? "HOT DEAL"
+      : effectiveBadge === "featured"
+        ? "FEATURED"
+        : "NEW";
   const displayPrice = getDisplayPrice(product);
 
   function handleAddToCart(e: React.MouseEvent) {
@@ -30,16 +49,23 @@ export default function ProductCard({
       image: product.image,
       price: displayPrice,
     });
+    showToast(`Added "${product.name}" to cart`, "success");
   }
 
   function handleWishlist(e: React.MouseEvent) {
     e.preventDefault();
+    const willBeWishlisted = !wishlisted;
     toggleItem({
       slug: product.slug,
       name: product.name,
       image: product.image,
       price: displayPrice,
     });
+    showToast(
+      willBeWishlisted
+        ? `Added "${product.name}" to wishlist`
+        : `Removed "${product.name}" from wishlist`
+    );
   }
 
   return (
@@ -48,12 +74,12 @@ export default function ProductCard({
       className="glass glass-card flex flex-col overflow-hidden rounded-[26px]"
     >
       <div className="relative flex h-[210px] items-center justify-center rounded-t-[26px] bg-white/90 p-5">
-        {badge ? (
+        {effectiveBadge ? (
           <span
             className="absolute left-3.5 top-3.5 rounded-full px-2.5 py-1 text-[11px] font-bold text-white"
             style={{ background: accent }}
           >
-            {badge === "hot" ? "HOT DEAL" : "NEW"}
+            {badgeLabel}
           </span>
         ) : null}
         <button

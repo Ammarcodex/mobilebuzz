@@ -39,6 +39,11 @@
   --subtle-surface: rgba(0, 0, 0, 0.04);
   --subtle-surface-strong: rgba(0, 0, 0, 0.05);
   --subtle-border: rgba(0, 0, 0, 0.1);
+
+  /* The navbar is page chrome, not a card — it should blend into the page
+     background (tinted off --color-bg) rather than read as a distinct
+     floating gray panel the way --surface-bg does for cards. */
+  --nav-bg: rgba(255, 255, 255, 0.65);
 }
 
 :root[data-theme="dark"] {
@@ -62,6 +67,10 @@
   --subtle-surface: rgba(255, 255, 255, 0.06);
   --subtle-surface-strong: rgba(255, 255, 255, 0.09);
   --subtle-border: rgba(255, 255, 255, 0.12);
+
+  /* Black-based (not the gray --surface-bg cards use) so the navbar
+     visually merges with the pure-black dark page background. */
+  --nav-bg: rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -117,6 +126,22 @@ a {
   box-shadow: var(--surface-hover-shadow);
 }
 
+/* Floating nav bar: like .glass, but tinted off --color-bg (--nav-bg) so it
+   merges with the page instead of reading as a separate card, and animates
+   its own padding/gap/background so JS only has to swap Tailwind classes
+   for the Apple-style "squeeze" on scroll. */
+.nav-glass {
+  background: var(--nav-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
+  transition:
+    background 0.3s ease,
+    padding 0.3s ease,
+    gap 0.3s ease;
+}
+
 .pill-solid {
   transition:
     filter 0.2s ease,
@@ -126,6 +151,10 @@ a {
 .pill-solid:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
+}
+
+.pill-solid:active {
+  transform: scale(0.96);
 }
 
 .pill-glass {
@@ -139,6 +168,10 @@ a {
   transform: translateY(-1px);
 }
 
+.pill-glass:active {
+  transform: scale(0.96);
+}
+
 .icon-btn {
   transition:
     background 0.2s ease,
@@ -150,12 +183,22 @@ a {
   transform: translateY(-1px);
 }
 
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
 .cart-btn {
-  transition: filter 0.2s ease;
+  transition:
+    filter 0.2s ease,
+    transform 0.15s ease;
 }
 
 .cart-btn:hover {
   filter: brightness(1.1);
+}
+
+.cart-btn:active {
+  transform: scale(0.92);
 }
 
 .nav-link {
@@ -191,6 +234,25 @@ a {
   border-color: var(--color-accent);
 }
 
+/* Error state (e.g. a down payment below the required minimum). Defined
+   after .input so it wins the tie on shared properties without needing
+   !important — both are plain unlayered rules of equal specificity. */
+.input-error {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
+}
+
+.input-error:focus {
+  border-color: #ef4444;
+}
+
+:root[data-theme="dark"] .input-error {
+  border-color: rgba(248, 113, 113, 0.7);
+  background: rgba(239, 68, 68, 0.14);
+  color: #fca5a5;
+}
+
 /* Native <select> dropdown popups are OS/browser-rendered and don't
    reliably pick up dark mode from color-scheme alone on every browser —
    style the options explicitly so they're never light-on-light. */
@@ -220,4 +282,72 @@ select option {
 
 .subtle-surface-strong {
   background: var(--subtle-surface-strong);
+}
+
+/* Infinite-scroll brand logo ticker. The track renders the logo list twice
+   back to back and scrolls exactly one set's width, so the loop is seamless. */
+@keyframes brand-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.brand-marquee-track {
+  animation: brand-marquee 28s linear infinite;
+}
+
+.brand-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-marquee-track {
+    animation: none;
+  }
+}
+
+/* Loading skeletons (product grids/pages while server data is fetched). */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--subtle-surface) 25%,
+    var(--subtle-surface-strong) 50%,
+    var(--subtle-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* Toast notifications */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast {
+  animation: toast-in 0.2s ease-out;
 }

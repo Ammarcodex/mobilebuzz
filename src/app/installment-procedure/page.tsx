@@ -40,13 +40,14 @@ export default function InstallmentProcedurePage() {
             total and monthly installment for your chosen plan.
           </li>
           <li>
-            Pay a down payment upfront (any amount you choose) — the rest is
+            Pay a down payment upfront — at least 30% of the phone&apos;s
+            price, though you&apos;re welcome to pay more — and the rest is
             split evenly across your chosen number of months.
           </li>
           <li>
-            Visit our store at {BUSINESS.address} or contact us via WhatsApp/
-            phone at {BUSINESS.phonePrimary} to confirm your plan and complete
-            the paperwork — no credit card or bank approval needed.
+            Contact us via WhatsApp/phone at {BUSINESS.phonePrimary} to
+            confirm your plan and complete the paperwork — no credit card or
+            bank approval needed.
           </li>
           <li>Collect your device and pay your monthly installments as agreed.</li>
         </ol>

@@ -9,6 +9,7 @@ import {
 } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 import CategoryCard from "@/components/CategoryCard";
+import BrandMarquee from "@/components/BrandMarquee";
 import { formatPrice, getDisplayPrice } from "@/lib/format";
 import { INSTALLMENT_PLANS } from "@/lib/installment";
 
@@ -179,23 +180,7 @@ export default async function Home() {
         <h2 className="m-0 mb-6 text-center text-xl font-extrabold text-ink">
           Our Authorized Brands
         </h2>
-        <div className="glass grid grid-cols-3 items-center gap-3 rounded-[30px] p-7 sm:grid-cols-5 lg:grid-cols-9">
-          {brands.map((brand) => (
-            <div
-              key={brand.name}
-              className="flex h-12 items-center justify-center rounded-xl bg-white/90 p-2"
-            >
-              <Image
-                src={brand.logo}
-                alt={brand.name}
-                width={90}
-                height={40}
-                unoptimized
-                className="max-h-full max-w-full object-contain"
-              />
-            </div>
-          ))}
-        </div>
+        <BrandMarquee brands={brands} />
       </div>
     </div>
   );

@@ -16,11 +16,22 @@ const CARE_LINKS = [
   { href: "/contact-us", label: "FAQs" },
 ];
 
-function SocialIcon({ children, label }: { children: React.ReactNode; label: string }) {
+function SocialIcon({
+  children,
+  label,
+  href = "#",
+}: {
+  children: React.ReactNode;
+  label: string;
+  href?: string;
+}) {
+  const external = href !== "#";
   return (
     <a
-      href="#"
+      href={href}
       aria-label={label}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
       className="icon-btn flex h-[34px] w-[34px] items-center justify-center rounded-full subtle-surface text-[#3a3a3d] dark:text-[#e5e5ea]"
     >
       {children}
@@ -67,7 +78,10 @@ export default function Footer() {
                   <path d="M18.9 3H21l-6.6 7.5L22 21h-6.3l-4.9-6.4L5.2 21H3l7-8-7-10h6.4l4.4 5.9L18.9 3z" />
                 </svg>
               </SocialIcon>
-              <SocialIcon label="WhatsApp">
+              <SocialIcon
+                label="WhatsApp"
+                href={`https://wa.me/${BUSINESS.whatsappNumber}`}
+              >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.1a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20.1z" />
                 </svg>
@@ -100,20 +114,6 @@ export default function Footer() {
           <div>
             <h4 className="mb-4 text-sm font-bold text-ink">Get In Touch</h4>
             <div className="flex flex-col gap-[13px] text-[13px] leading-[1.6] text-muted">
-              <div className="flex gap-2.5">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  className="mt-0.5 shrink-0"
-                >
-                  <path d="M12 2 4 5v6c0 5 3.5 8.7 8 11 4.5-2.3 8-6 8-11V5z" />
-                </svg>
-                <span>{BUSINESS.address}</span>
-              </div>
               <a
                 href={BUSINESS.phonePrimaryHref}
                 className="foot-link flex items-center gap-2.5"
@@ -129,22 +129,6 @@ export default function Footer() {
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
                 {BUSINESS.phonePrimary}
-              </a>
-              <a
-                href={BUSINESS.phoneSecondaryHref}
-                className="foot-link flex items-center gap-2.5"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                >
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-                {BUSINESS.phoneSecondary}
               </a>
               <a
                 href={`mailto:${BUSINESS.emailSales}`}

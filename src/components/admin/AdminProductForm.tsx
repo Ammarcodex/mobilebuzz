@@ -6,6 +6,7 @@ import type { Category, Product, ProductColor, Spec, StorageOption } from "@/lib
 import { createProductAction, updateProductAction } from "@/app/admin/actions";
 import ColorNameInput from "./ColorNameInput";
 import SelectWithOther from "./SelectWithOther";
+import PhotoUploadInput from "./PhotoUploadInput";
 import { parseSpecText } from "@/lib/specParser";
 import { RAM_OPTIONS, STORAGE_OPTIONS } from "@/lib/phoneSpecOptions";
 
@@ -37,6 +38,7 @@ export default function AdminProductForm({
 }) {
   const action = mode === "create" ? createProductAction : updateProductAction;
   const [state, formAction, pending] = useActionState(action, undefined);
+  const [photosProcessing, setPhotosProcessing] = useState(false);
 
   const [categorySlug, setCategorySlug] = useState(
     initialProduct?.category ?? ""
@@ -80,6 +82,12 @@ export default function AdminProductForm({
       [];
     return brands.map((b) => b.name);
   }, [categories, selectedCategory]);
+
+  function updateStorageOption(index: number, patch: Partial<StorageOption>) {
+    setStorageOptions((prev) =>
+      prev.map((o, idx) => (idx === index ? { ...o, ...patch } : o))
+    );
+  }
 
   function handleParseSpecs() {
     const parsed = parseSpecText(pasteText);
@@ -252,21 +260,15 @@ export default function AdminProductForm({
             ))}
           </div>
         ) : null}
-        <FormField
-          label={
-            existingImages.length > 0 ? "Add More Photos" : "Photos"
-          }
-        >
-          <input
-            name="images"
-            type="file"
-            accept="image/*"
-            multiple
-            className="input"
-          />
-        </FormField>
+        <PhotoUploadInput
+          name="images"
+          label={existingImages.length > 0 ? "Add More Photos" : "Photos"}
+          onProcessingChange={setPhotosProcessing}
+        />
         <p className="m-0 text-xs text-muted">
-          The first photo is used as the main product image.
+          The first photo is used as the main product image. Background
+          removal works best on plain white/light studio photos — turn it
+          off if a photo comes out wrong and re-upload it as-is.
         </p>
       </div>
 
@@ -280,7 +282,12 @@ export default function AdminProductForm({
             onClick={() =>
               setStorageOptions((prev) => [
                 ...prev,
-                { ram: "", rom: "", price: initialProduct?.price ?? 0 },
+                {
+                  ram: "",
+                  rom: "",
+                  price: initialProduct?.price ?? 0,
+                  ptaStatus: "pta",
+                },
               ])
             }
             className="pill-glass glass rounded-full px-4 py-2 text-xs font-bold text-ink"
@@ -289,12 +296,14 @@ export default function AdminProductForm({
           </button>
         </div>
         <p className="m-0 text-xs text-muted">
-          Each option is a RAM + Storage combo with its own price, shown as a
-          button like &quot;8 - 128&quot; or &quot;12 - 256&quot;. Enter the
-          full selling price for each — not an adjustment on top of the base
-          price. If you add any options here, the base Price field above is
-          only used as a fallback (e.g. for the shop grid) and is not shown
-          on the product page itself.
+          Each option is a RAM + Storage combo with its own price and PTA
+          status, shown as a button like &quot;8 - 128&quot; or &quot;12 -
+          256&quot;. Enter the full selling price for each — not an
+          adjustment on top of the base price. To sell the same RAM + Storage
+          combo at two prices, add it twice: once marked PTA Approved, once
+          marked Non-PTA. If you add any options here, the base Price field
+          above is only used as a fallback (e.g. for the shop grid) and is
+          not shown on the product page itself.
         </p>
         {storageOptions.map((option, i) => (
           <div key={i} className="flex flex-wrap items-end gap-3">
@@ -304,13 +313,7 @@ export default function AdminProductForm({
               </span>
               <SelectWithOther
                 value={option.ram}
-                onChange={(value) =>
-                  setStorageOptions((prev) =>
-                    prev.map((o, idx) =>
-                      idx === i ? { ...o, ram: value } : o
-                    )
-                  )
-                }
+                onChange={(value) => updateStorageOption(i, { ram: value })}
                 options={RAM_OPTIONS}
                 placeholder="e.g. 8"
               />
@@ -321,16 +324,43 @@ export default function AdminProductForm({
               </span>
               <SelectWithOther
                 value={option.rom}
-                onChange={(value) =>
-                  setStorageOptions((prev) =>
-                    prev.map((o, idx) =>
-                      idx === i ? { ...o, rom: value } : o
-                    )
-                  )
-                }
+                onChange={(value) => updateStorageOption(i, { rom: value })}
                 options={STORAGE_OPTIONS}
                 placeholder="e.g. 128"
               />
+            </div>
+            <div>
+              <span className="mb-1.5 block text-sm font-semibold text-ink">
+                PTA Status
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateStorageOption(i, { ptaStatus: "pta" })
+                  }
+                  className={`rounded-full px-3 py-2.5 text-xs font-bold transition-colors ${
+                    (option.ptaStatus ?? "pta") === "pta"
+                      ? "bg-accent text-white"
+                      : "pill-glass glass text-ink"
+                  }`}
+                >
+                  PTA Approved
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateStorageOption(i, { ptaStatus: "non-pta" })
+                  }
+                  className={`rounded-full px-3 py-2.5 text-xs font-bold transition-colors ${
+                    option.ptaStatus === "non-pta"
+                      ? "bg-accent text-white"
+                      : "pill-glass glass text-ink"
+                  }`}
+                >
+                  Non-PTA
+                </button>
+              </div>
             </div>
             <div className="w-36 flex-1">
               <span className="mb-1.5 block text-sm font-semibold text-ink">
@@ -340,13 +370,7 @@ export default function AdminProductForm({
                 type="number"
                 value={option.price}
                 onChange={(e) =>
-                  setStorageOptions((prev) =>
-                    prev.map((o, idx) =>
-                      idx === i
-                        ? { ...o, price: Number(e.target.value) || 0 }
-                        : o
-                    )
-                  )
+                  updateStorageOption(i, { price: Number(e.target.value) || 0 })
                 }
                 className="input"
               />
@@ -530,14 +554,16 @@ export default function AdminProductForm({
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || photosProcessing}
         className="pill-solid self-start rounded-full bg-accent px-8 py-3.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(0,113,227,0.35)] disabled:opacity-60"
       >
-        {pending
-          ? "Saving…"
-          : mode === "create"
-            ? "Add Phone"
-            : "Save Changes"}
+        {photosProcessing
+          ? "Removing background…"
+          : pending
+            ? "Saving…"
+            : mode === "create"
+              ? "Add Phone"
+              : "Save Changes"}
       </button>
     </form>
   );

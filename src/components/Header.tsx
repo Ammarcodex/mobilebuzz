@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { useCart } from "@/context/CartContext";
-import { useWishlist } from "@/context/WishlistContext";
 import { categories } from "@/lib/data";
 import { BUSINESS } from "@/lib/format";
 
@@ -39,23 +38,6 @@ function CartIcon() {
   );
 }
 
-function HeartIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
-    </svg>
-  );
-}
-
 function CountBadge({ n }: { n: number }) {
   if (n <= 0) return null;
   return (
@@ -67,11 +49,28 @@ function CountBadge({ n }: { n: number }) {
 
 export default function Header() {
   const { count: cartCount } = useCart();
-  const { count: wishlistCount } = useWishlist();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
+
+  // Apple-style squeeze: the nav bar compacts its padding/gap and the logo
+  // shrinks slightly once the page has scrolled past the very top.
+  useEffect(() => {
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 8);
+        ticking = false;
+      });
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -81,9 +80,22 @@ export default function Header() {
   }
 
   return (
-    <header>
-      {/* Thin contact strip */}
-      <div className="mx-auto hidden max-w-[1240px] items-center justify-end gap-5 px-6 pt-2.5 text-xs text-muted md:flex">
+    <header
+      // position:sticky must live on <header> itself, not a div nested inside
+      // it: a sticky element can't stick past the bottom of its own parent,
+      // and a wrapper div here would be no taller than its own content (just
+      // this nav strip), leaving it no room to stay pinned while scrolling.
+      // <header>'s real parent is the page's full-height wrapper, which is.
+      className={`sticky z-40 transition-[top] duration-300 ease-out ${
+        scrolled ? "top-2" : "top-4"
+      }`}
+    >
+      {/* Thin contact strip — collapses away as part of the scroll squeeze */}
+      <div
+        className={`mx-auto hidden max-w-[1240px] items-center justify-end gap-5 overflow-hidden px-6 text-xs text-muted transition-[max-height,opacity,padding] duration-300 ease-out md:flex ${
+          scrolled ? "max-h-0 py-0 opacity-0" : "max-h-10 pt-2.5 opacity-100"
+        }`}
+      >
         <a
           href={BUSINESS.phonePrimaryHref}
           className="foot-link flex items-center gap-1.5"
@@ -107,8 +119,12 @@ export default function Header() {
       </div>
 
       {/* Floating glass nav */}
-      <div className="sticky top-4 z-40 mx-auto max-w-[1200px] px-6">
-        <div className="glass flex items-center gap-7 rounded-[22px] px-5 py-2.5">
+      <div className="mx-auto max-w-[1200px] px-6">
+        <div
+          className={`nav-glass flex items-center rounded-[22px] ${
+            scrolled ? "gap-5 px-4 py-1.5" : "gap-7 px-5 py-2.5"
+          }`}
+        >
           {searchOpen ? (
             <form
               onSubmit={handleSearch}
@@ -159,7 +175,13 @@ export default function Header() {
           ) : (
             <>
               <Link href="/" aria-label="Mobile Buzz home" className="flex items-center">
-                <Logo />
+                <span
+                  className={`flex origin-left items-center transition-transform duration-300 ease-out ${
+                    scrolled ? "scale-90" : "scale-100"
+                  }`}
+                >
+                  <Logo />
+                </span>
               </Link>
 
               <nav
@@ -200,14 +222,6 @@ export default function Header() {
                   </svg>
                 </button>
                 <Link
-                  href="/wishlist"
-                  aria-label={`Wishlist, ${wishlistCount} items`}
-                  className="icon-btn relative flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink dark:bg-white/10"
-                >
-                  <HeartIcon />
-                  <CountBadge n={wishlistCount} />
-                </Link>
-                <Link
                   href="/cart"
                   aria-label={`Cart, ${cartCount} items`}
                   className="icon-btn relative flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink dark:bg-white/10"
@@ -240,7 +254,7 @@ export default function Header() {
         </div>
 
         {menuOpen ? (
-          <div className="glass mt-2 flex flex-col gap-1 rounded-2xl p-4 lg:hidden">
+          <div className="nav-glass mt-2 flex flex-col gap-1 rounded-2xl p-4 lg:hidden">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}

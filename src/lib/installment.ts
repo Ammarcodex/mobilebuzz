@@ -9,6 +9,13 @@ export const INSTALLMENT_PLANS = [
 
 export type InstallmentMonths = (typeof INSTALLMENT_PLANS)[number]["months"];
 
+/** Minimum required down payment, as a fraction of the product's price. */
+export const MIN_DOWN_PAYMENT_RATE = 0.3;
+
+export function getMinDownPayment(price: number): number {
+  return Math.round((price || 0) * MIN_DOWN_PAYMENT_RATE);
+}
+
 export function getRateForMonths(months: InstallmentMonths): number {
   const plan = INSTALLMENT_PLANS.find((p) => p.months === months);
   return plan ? plan.rate : 0;

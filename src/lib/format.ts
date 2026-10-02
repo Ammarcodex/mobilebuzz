@@ -19,13 +19,9 @@ export function getDisplayPrice(
 export const BUSINESS = {
   name: "Mobile Buzz",
   tagline: "Feel Free to Buy",
-  address:
-    "Shop No. 110, Mezzanine Floor, Emerald Tower, 2 Talwar, Block-5, Clifton, Karachi, Pakistan",
-  phonePrimary: "+92 314 3262666",
-  phonePrimaryHref: "tel:+923143262666",
-  phoneSecondary: "+92 305 6661301",
-  phoneSecondaryHref: "tel:+923056661301",
-  emailSales: "sale@mobilenbazaar.com",
+  phonePrimary: "+92 311 2269771",
+  phonePrimaryHref: "tel:+923112269771",
+  emailSales: "Mobilebuzz00@gmail.com",
   emailInfo: "mobilenbazaar@gmail.com",
-  whatsappNumber: "923143262666",
+  whatsappNumber: "923112269771",
 } as const;

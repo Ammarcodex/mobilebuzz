@@ -20,11 +20,15 @@ export interface ProductColor {
 /**
  * A selectable RAM+Storage configuration (e.g. "8GB / 128GB" vs "12GB / 256GB"),
  * each with its own full price. Shown as a button labeled "{ram} - {rom}".
+ * The same RAM+Storage combo can appear twice with different `ptaStatus` to
+ * offer separate PTA-approved and non-PTA pricing. Missing/legacy options are
+ * treated as PTA-approved.
  */
 export interface StorageOption {
   ram: string;
   rom: string;
   price: number;
+  ptaStatus?: "pta" | "non-pta";
 }
 
 export interface Product {

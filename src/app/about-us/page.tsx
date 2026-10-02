@@ -25,21 +25,11 @@ export default function AboutUsPage() {
         <div className="grid grid-cols-1 gap-6 border-t border-black/10 dark:border-white/10 pt-6 sm:grid-cols-2">
           <div>
             <h2 className="m-0 mb-2 text-sm font-bold uppercase tracking-wide text-subtle">
-              Visit Us
-            </h2>
-            <p className="m-0 text-sm text-ink">{BUSINESS.address}</p>
-          </div>
-          <div>
-            <h2 className="m-0 mb-2 text-sm font-bold uppercase tracking-wide text-subtle">
               Call Us
             </h2>
             <p className="m-0 text-sm text-ink">
               <a href={BUSINESS.phonePrimaryHref} className="hover:text-accent">
                 {BUSINESS.phonePrimary}
-              </a>
-              {" · "}
-              <a href={BUSINESS.phoneSecondaryHref} className="hover:text-accent">
-                {BUSINESS.phoneSecondary}
               </a>
             </p>
           </div>

@@ -5,8 +5,10 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AmbientBlobs from "@/components/AmbientBlobs";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { ToastProvider } from "@/context/ToastContext";
 
 const THEME_INIT_SCRIPT = `(function () {
   try {
@@ -43,23 +45,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={plusJakartaSans.variable} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${plusJakartaSans.variable} overflow-x-hidden`}
+      suppressHydrationWarning
+    >
       <head>
         <Script id="theme-init" strategy="beforeInteractive">
           {THEME_INIT_SCRIPT}
         </Script>
       </head>
-      <body className="relative min-h-screen overflow-x-hidden bg-bg font-sans text-ink antialiased">
+      <body className="relative min-h-screen bg-bg font-sans text-ink antialiased">
         <AmbientBlobs />
-        <CartProvider>
-          <WishlistProvider>
-            <div className="relative z-10 flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-          </WishlistProvider>
-        </CartProvider>
+        <ToastProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <div className="relative z-10 flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+              <WhatsAppButton />
+            </WishlistProvider>
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );

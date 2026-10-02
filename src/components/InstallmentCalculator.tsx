@@ -4,13 +4,23 @@ import { useMemo, useState } from "react";
 import {
   INSTALLMENT_PLANS,
   calculateInstallment,
+  getMinDownPayment,
   type InstallmentMonths,
 } from "@/lib/installment";
 import { formatPrice } from "@/lib/format";
 
 export default function InstallmentCalculator({ price }: { price: number }) {
   const [months, setMonths] = useState<InstallmentMonths>(6);
-  const [downPayment, setDownPayment] = useState<number>(0);
+  // null = user hasn't typed a custom amount yet, so it defaults to the 30%
+  // minimum and tracks it if price changes (e.g. a different storage
+  // option) — but once they type their own value, it's used as-is, even if
+  // that's below the minimum (flagged via isBelowMinimum instead of blocked).
+  const [downPaymentOverride, setDownPaymentOverride] = useState<number | null>(
+    null
+  );
+  const minDownPayment = getMinDownPayment(price);
+  const downPayment = downPaymentOverride ?? minDownPayment;
+  const isBelowMinimum = downPayment < minDownPayment;
 
   const breakdown = useMemo(
     () => calculateInstallment(price, months, downPayment),
@@ -59,11 +69,25 @@ export default function InstallmentCalculator({ price }: { price: number }) {
         <input
           type="number"
           min={0}
-          value={downPayment || ""}
-          onChange={(e) => setDownPayment(Number(e.target.value) || 0)}
-          placeholder="0"
-          className="w-full rounded-xl border border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10 px-4 py-2.5 text-sm text-ink outline-none focus:border-accent"
+          value={downPayment}
+          onChange={(e) =>
+            setDownPaymentOverride(Math.max(0, Number(e.target.value) || 0))
+          }
+          className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none ${
+            isBelowMinimum
+              ? "border-red-500 bg-red-50 text-red-700 focus:border-red-500 dark:border-red-500/70 dark:bg-red-500/10 dark:text-red-300"
+              : "border-black/10 bg-white/70 text-ink focus:border-accent dark:border-white/10 dark:bg-white/10"
+          }`}
         />
+        {isBelowMinimum ? (
+          <span className="mt-1.5 block text-xs font-semibold text-red-600 dark:text-red-400">
+            Down payment must be at least 30% ({formatPrice(minDownPayment)}).
+          </span>
+        ) : (
+          <span className="mt-1.5 block text-xs text-muted">
+            Minimum 30% ({formatPrice(minDownPayment)}) — you can pay more upfront if you&apos;d like.
+          </span>
+        )}
       </label>
 
       <dl className="grid grid-cols-2 gap-3 text-sm">

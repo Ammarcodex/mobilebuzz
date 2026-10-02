@@ -118,6 +118,7 @@ async function buildProductFromFormData(
       ram: o.ram.trim(),
       rom: o.rom.trim(),
       price: Number(o.price) || 0,
+      ptaStatus: o.ptaStatus === "non-pta" ? ("non-pta" as const) : ("pta" as const),
     }));
 
   return {

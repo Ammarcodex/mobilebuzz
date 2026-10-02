@@ -8,6 +8,7 @@ import { BUSINESS } from "@/lib/format";
 import {
   INSTALLMENT_PLANS,
   calculateInstallment,
+  getMinDownPayment,
   type InstallmentMonths,
 } from "@/lib/installment";
 
@@ -34,8 +35,14 @@ export default function CheckoutPage() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [months, setMonths] = useState<InstallmentMonths>(6);
-  const [downPayment, setDownPayment] = useState<number>(0);
+  const [downPaymentOverride, setDownPaymentOverride] = useState<number | null>(
+    null
+  );
   const [summary, setSummary] = useState<string | null>(null);
+
+  const minDownPayment = getMinDownPayment(subtotal);
+  const downPayment = downPaymentOverride ?? minDownPayment;
+  const isDownPaymentBelowMinimum = downPayment < minDownPayment;
 
   const breakdown = useMemo(
     () => calculateInstallment(subtotal, months, downPayment),
@@ -226,11 +233,22 @@ export default function CheckoutPage() {
                 <input
                   type="number"
                   min={0}
-                  value={downPayment || ""}
-                  onChange={(e) => setDownPayment(Number(e.target.value) || 0)}
-                  placeholder="0"
-                  className="input"
+                  value={downPayment}
+                  onChange={(e) =>
+                    setDownPaymentOverride(Math.max(0, Number(e.target.value) || 0))
+                  }
+                  className={isDownPaymentBelowMinimum ? "input input-error" : "input"}
                 />
+                {isDownPaymentBelowMinimum ? (
+                  <span className="mt-1.5 block text-xs font-semibold text-red-600 dark:text-red-400">
+                    Down payment must be at least 30% ({formatPrice(minDownPayment)}).
+                  </span>
+                ) : (
+                  <span className="mt-1.5 block text-xs text-muted">
+                    Minimum 30% ({formatPrice(minDownPayment)}) — you can pay
+                    more upfront if you&apos;d like.
+                  </span>
+                )}
               </label>
 
               <dl className="grid grid-cols-2 gap-3 text-sm">

@@ -5,10 +5,6 @@ import ContactForm from "@/components/ContactForm";
 export const metadata: Metadata = { title: "Contact Us" };
 
 export default function ContactUsPage() {
-  const mapsSrc = `https://www.google.com/maps?q=${encodeURIComponent(
-    BUSINESS.address
-  )}&output=embed`;
-
   return (
     <div className="mx-auto max-w-[1100px] px-6 pb-16 pt-10">
       <h1 className="m-0 mb-8 text-[32px] font-extrabold tracking-tight text-ink">
@@ -23,17 +19,9 @@ export default function ContactUsPage() {
             </h2>
             <div className="flex flex-col gap-3 text-sm text-ink">
               <div>
-                <span className="font-semibold">Address: </span>
-                {BUSINESS.address}
-              </div>
-              <div>
                 <span className="font-semibold">Phone: </span>
                 <a href={BUSINESS.phonePrimaryHref} className="hover:text-accent">
                   {BUSINESS.phonePrimary}
-                </a>
-                {" · "}
-                <a href={BUSINESS.phoneSecondaryHref} className="hover:text-accent">
-                  {BUSINESS.phoneSecondary}
                 </a>
               </div>
               <div>
@@ -47,18 +35,6 @@ export default function ContactUsPage() {
                 </a>
               </div>
             </div>
-          </div>
-
-          <div className="glass overflow-hidden rounded-3xl">
-            <iframe
-              title="Mobile Buzz location"
-              src={mapsSrc}
-              width="100%"
-              height="320"
-              style={{ border: 0 }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
           </div>
         </div>
 
