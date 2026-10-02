@@ -149,10 +149,7 @@ export default async function Home() {
                 className="rounded-full border border-white/[0.14] bg-white/[0.08] px-5 py-2.5 text-center"
               >
                 <div className="text-sm font-extrabold text-white">
-                  {plan.months}mo{" "}
-                  <span className="text-xs font-medium text-white/60">
-                    +{Math.round(plan.rate * 100)}%
-                  </span>
+                  {plan.months}mo
                 </div>
               </div>
             ))}

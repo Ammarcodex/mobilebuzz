@@ -23,9 +23,6 @@ export default function InstallmentProcedurePage() {
               {plan.months}
               <span className="text-sm font-medium text-muted"> months</span>
             </div>
-            <div className="mt-1 text-sm font-bold text-accent">
-              +{Math.round(plan.rate * 100)}% markup
-            </div>
           </div>
         ))}
       </div>
@@ -38,8 +35,9 @@ export default function InstallmentProcedurePage() {
             12 months.
           </li>
           <li>
-            The plan&apos;s markup rate ({INSTALLMENT_PLANS.map((p) => `${p.months}mo +${Math.round(p.rate * 100)}%`).join(", ")}) is added to the retail
-            price to get the total payable amount.
+            A small markup is added to the retail price to get the total
+            payable amount — use the calculator below to see the exact
+            total and monthly installment for your chosen plan.
           </li>
           <li>
             Pay a down payment upfront (any amount you choose) — the rest is

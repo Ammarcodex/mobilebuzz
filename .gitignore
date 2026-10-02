@@ -34,10 +34,6 @@ yarn-error.log*
 .env*
 !.env.example
 
-# admin-uploaded product images (runtime content, not source)
-/public/uploads/products/*
-!/public/uploads/products/.gitkeep
-
 # vercel
 .vercel
 

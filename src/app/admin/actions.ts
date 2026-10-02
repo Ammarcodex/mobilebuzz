@@ -58,6 +58,14 @@ export interface ProductFormState {
   error?: string;
 }
 
+function productErrorMessage(error: unknown, fallback: string): string {
+  if (!(error instanceof Error)) return fallback;
+  if (/bsonobj size|document.{0,20}too large/i.test(error.message)) {
+    return "This product's photos add up to too much data to save — remove a photo or use smaller/fewer images.";
+  }
+  return error.message;
+}
+
 function parseJsonArray<T>(formData: FormData, field: string): T[] {
   const raw = formData.get(field);
   if (typeof raw !== "string" || !raw.trim()) return [];
@@ -140,7 +148,7 @@ export async function createProductAction(
     const slug = await generateUniqueSlug(draft.name);
     await createProduct({ ...draft, slug });
   } catch (error) {
-    return { error: error instanceof Error ? error.message : "Failed to create product." };
+    return { error: productErrorMessage(error, "Failed to create product.") };
   }
 
   revalidatePath("/shop");
@@ -175,7 +183,7 @@ export async function updateProductAction(
     );
     await updateProduct(originalSlug, { ...draft, slug: originalSlug });
   } catch (error) {
-    return { error: error instanceof Error ? error.message : "Failed to update product." };
+    return { error: productErrorMessage(error, "Failed to update product.") };
   }
 
   revalidatePath("/shop");

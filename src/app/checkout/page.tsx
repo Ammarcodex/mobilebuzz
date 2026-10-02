@@ -213,14 +213,7 @@ export default function CheckoutPage() {
                           : "bg-white/60 text-ink"
                       }`}
                     >
-                      {plan.months}mo{" "}
-                      <span
-                        className={
-                          months === plan.months ? "text-white/70" : "text-muted"
-                        }
-                      >
-                        +{Math.round(plan.rate * 100)}%
-                      </span>
+                      {plan.months}mo
                     </button>
                   ))}
                 </div>
