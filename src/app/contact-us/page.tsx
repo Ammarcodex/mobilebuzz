@@ -29,10 +29,6 @@ export default function ContactUsPage() {
                 <a href={`mailto:${BUSINESS.emailSales}`} className="hover:text-accent">
                   {BUSINESS.emailSales}
                 </a>
-                {" · "}
-                <a href={`mailto:${BUSINESS.emailInfo}`} className="hover:text-accent">
-                  {BUSINESS.emailInfo}
-                </a>
               </div>
             </div>
           </div>
