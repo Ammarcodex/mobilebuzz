@@ -10,6 +10,7 @@ import {
 import ProductCard from "@/components/ProductCard";
 import CategoryCard from "@/components/CategoryCard";
 import BrandMarquee from "@/components/BrandMarquee";
+import TrustedCustomersStats from "@/components/TrustedCustomersStats";
 import TypewriterText from "@/components/TypewriterText";
 import Reveal from "@/components/Reveal";
 import { formatPrice, getDisplayPrice } from "@/lib/format";
@@ -31,7 +32,7 @@ export default async function Home() {
   return (
     <div>
       {/* Hero */}
-      <div className="mx-auto max-w-[1240px] px-6 pt-10">
+      <div className="mx-auto max-w-[1440px] px-6 pt-10">
         <div className="glass grid grid-cols-1 items-center gap-10 overflow-hidden rounded-[40px] p-8 sm:p-12 lg:grid-cols-2 lg:p-16">
           <div className="flex flex-col gap-5">
             <span
@@ -41,7 +42,7 @@ export default async function Home() {
               {hero ? "NEW ARRIVAL" : "WELCOME"}
             </span>
             <h1
-              className="hero-in m-0 text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-5xl"
+              className="hero-in gradient-text m-0 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl"
               style={{ "--hero-in-delay": "80ms" } as React.CSSProperties}
             >
               <TypewriterText
@@ -95,7 +96,7 @@ export default async function Home() {
             </div>
           </div>
           <div
-            className="hero-in photo-surface relative flex items-center justify-center rounded-[28px] p-6"
+            className="hero-in relative flex items-center justify-center rounded-[28px] p-6"
             style={{ "--hero-in-delay": "120ms" } as React.CSSProperties}
           >
             {hero?.image ? (
@@ -105,7 +106,7 @@ export default async function Home() {
                 width={320}
                 height={360}
                 unoptimized
-                className="max-h-[340px] max-w-[300px] object-contain"
+                className="hero-float max-h-[340px] max-w-[300px] object-contain"
                 style={{
                   filter: "drop-shadow(0 30px 40px rgba(0,113,227,0.25))",
                 }}
@@ -119,8 +120,8 @@ export default async function Home() {
       </div>
 
       {/* Category tiles */}
-      <Reveal className="mx-auto max-w-[1240px] px-6 pt-12">
-        <div className="grid grid-cols-2 gap-[18px] lg:grid-cols-4">
+      <Reveal className="mx-auto max-w-[1440px] px-6 pt-12">
+        <div className="grid grid-cols-2 gap-[18px] sm:grid-cols-3 lg:grid-cols-5">
           {categories.map((category) => (
             <CategoryCard key={category.slug} category={category} />
           ))}
@@ -150,7 +151,7 @@ export default async function Home() {
       ) : null}
 
       {/* Installment banner */}
-      <Reveal className="mx-auto mt-14 max-w-[1240px] px-6">
+      <Reveal className="mx-auto mt-14 max-w-[1440px] px-6">
         <div className="glass-dark flex flex-wrap items-center justify-between gap-6 rounded-[32px] p-9">
           <div className="flex items-center gap-4.5">
             <span className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-2xl bg-white/10">
@@ -202,11 +203,19 @@ export default async function Home() {
       ) : null}
 
       {/* Brand strip */}
-      <Reveal className="mx-auto max-w-[1240px] px-6 pt-14">
+      <Reveal className="mx-auto max-w-[1440px] px-6 pt-14">
         <h2 className="m-0 mb-6 text-center text-xl font-extrabold text-ink">
           Our Authorized Brands
         </h2>
         <BrandMarquee brands={brands} />
+      </Reveal>
+
+      {/* Trusted customers counters */}
+      <Reveal className="mx-auto max-w-[1440px] px-6 pb-4 pt-14">
+        <h2 className="m-0 mb-6 text-center text-xl font-extrabold text-ink">
+          Our Trusted Customers
+        </h2>
+        <TrustedCustomersStats />
       </Reveal>
     </div>
   );
@@ -222,7 +231,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <Reveal className="mx-auto max-w-[1240px] px-6 pt-14">
+    <Reveal className="mx-auto max-w-[1440px] px-6 pt-14">
       <div className="mb-[22px] flex items-baseline justify-between">
         <h2 className="m-0 text-[28px] font-extrabold tracking-tight text-ink">
           {title}

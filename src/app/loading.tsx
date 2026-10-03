@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <div>
       {/* Hero */}
-      <div className="mx-auto max-w-[1240px] px-6 pt-10">
+      <div className="mx-auto max-w-[1440px] px-6 pt-10">
         <div className="glass grid grid-cols-1 items-center gap-10 overflow-hidden rounded-[40px] p-8 sm:p-12 lg:grid-cols-2 lg:p-16">
           <div className="flex flex-col gap-5">
             <div className="skeleton h-3 w-24 rounded-full" />
@@ -20,7 +20,7 @@ export default function Loading() {
       </div>
 
       {/* Category tiles */}
-      <div className="mx-auto max-w-[1240px] px-6 pt-12">
+      <div className="mx-auto max-w-[1440px] px-6 pt-12">
         <div className="grid grid-cols-2 gap-[18px] lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="skeleton h-28 rounded-[22px]" />
@@ -29,7 +29,7 @@ export default function Loading() {
       </div>
 
       {/* New Arrivals */}
-      <div className="mx-auto max-w-[1240px] px-6 pt-14">
+      <div className="mx-auto max-w-[1440px] px-6 pt-14">
         <div className="mb-[22px] flex items-baseline justify-between">
           <div className="skeleton h-7 w-44 rounded-full" />
           <div className="skeleton h-4 w-16 rounded-full" />

@@ -41,7 +41,7 @@ function SocialIcon({
 
 export default function Footer() {
   return (
-    <footer className="mx-auto mt-16 max-w-[1240px] px-6 pb-6">
+    <footer className="mx-auto mt-16 max-w-[1440px] px-6 pb-6">
       <div className="glass rounded-[32px] p-8 sm:p-11">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>

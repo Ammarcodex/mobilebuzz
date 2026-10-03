@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { useCart } from "@/context/CartContext";
@@ -79,6 +79,60 @@ export default function Header() {
     router.push(q ? `/shop?q=${encodeURIComponent(q)}` : "/shop");
   }
 
+  // Dynamic-Island-style fold: once scrolled, the pill itself narrows down
+  // to just the logo + icon cluster (nav links fold away, reachable via the
+  // menu button instead) and expands back the moment you scroll back up.
+  // Suppressed while search is open so the input isn't squeezed narrow.
+  const islandCollapsed = scrolled && !searchOpen;
+
+  // Traveling liquid-glass indicator behind the nav links: tracks whichever
+  // link is currently hovered and glides to match its position/width,
+  // rather than each link independently fading its own background in.
+  const navRef = useRef<HTMLElement>(null);
+  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const [hoverRect, setHoverRect] = useState<{ left: number; width: number } | null>(
+    null
+  );
+
+  function handleLinkHover(e: React.MouseEvent<HTMLAnchorElement>) {
+    const navEl = navRef.current;
+    if (!navEl) return;
+    const linkRect = e.currentTarget.getBoundingClientRect();
+    const navRect = navEl.getBoundingClientRect();
+    setHoverRect({ left: linkRect.left - navRect.left, width: linkRect.width });
+  }
+
+  // The page you're actually on keeps its own indicator showing even when
+  // the mouse isn't over the nav at all — only an active *hover* elsewhere
+  // temporarily takes over and replaces it, rather than the pill just
+  // vanishing the moment you stop hovering.
+  const pathname = usePathname();
+  const activeHref = NAV_LINKS.find((link) =>
+    link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)
+  )?.href;
+  const [activeRect, setActiveRect] = useState<{ left: number; width: number } | null>(
+    null
+  );
+
+  useEffect(() => {
+    function measureActive() {
+      const navEl = navRef.current;
+      const activeEl = activeHref ? linkRefs.current[activeHref] : null;
+      if (!navEl || !activeEl) {
+        setActiveRect(null);
+        return;
+      }
+      const linkRect = activeEl.getBoundingClientRect();
+      const navRect = navEl.getBoundingClientRect();
+      setActiveRect({ left: linkRect.left - navRect.left, width: linkRect.width });
+    }
+    measureActive();
+    window.addEventListener("resize", measureActive);
+    return () => window.removeEventListener("resize", measureActive);
+  }, [activeHref, islandCollapsed]);
+
+  const indicatorRect = hoverRect ?? activeRect;
+
   return (
     <header
       // position:sticky must live on <header> itself, not a div nested inside
@@ -92,7 +146,7 @@ export default function Header() {
     >
       {/* Thin contact strip — collapses away as part of the scroll squeeze */}
       <div
-        className={`mx-auto hidden max-w-[1240px] items-center justify-end gap-5 overflow-hidden px-6 text-xs text-muted transition-[max-height,opacity,padding] duration-300 ease-out md:flex ${
+        className={`mx-auto hidden max-w-[1440px] items-center justify-end gap-5 overflow-hidden px-6 text-xs text-muted transition-[max-height,opacity,padding] duration-300 ease-out md:flex ${
           scrolled ? "max-h-0 py-0 opacity-0" : "max-h-10 pt-2.5 opacity-100"
         }`}
       >
@@ -119,10 +173,14 @@ export default function Header() {
       </div>
 
       {/* Floating glass nav */}
-      <div className="mx-auto max-w-[1200px] px-6">
+      <div className="mx-auto max-w-[1400px] px-6">
         <div
-          className={`nav-glass flex items-center rounded-[22px] ${
-            scrolled ? "gap-5 px-4 py-1.5" : "gap-7 px-5 py-2.5"
+          className={`nav-glass mx-auto flex items-center overflow-hidden rounded-[22px] ${
+            islandCollapsed
+              ? "max-w-[460px] gap-3 px-4 py-2"
+              : scrolled
+                ? "max-w-full gap-5 px-4 py-1.5"
+                : "max-w-full gap-7 px-5 py-2.5"
           }`}
         >
           {searchOpen ? (
@@ -185,14 +243,37 @@ export default function Header() {
               </Link>
 
               <nav
+                ref={navRef}
                 aria-label="Main"
-                className="hidden flex-grow flex-wrap gap-5 lg:flex"
+                onMouseLeave={() => setHoverRect(null)}
+                className={`relative hidden flex-grow flex-nowrap items-center gap-1 overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-300 ease-out lg:flex ${
+                  islandCollapsed ? "max-w-0 opacity-0" : "max-w-[800px] opacity-100"
+                }`}
               >
+                {/* Traveling liquid-glass indicator — glides to whichever
+                    link is hovered, or otherwise sits under whatever page
+                    you're actually on, rather than vanishing when the mouse
+                    isn't over the nav. */}
+                <div
+                  aria-hidden="true"
+                  className="nav-pill-indicator"
+                  style={{
+                    opacity: indicatorRect ? 1 : 0,
+                    width: indicatorRect?.width ?? 0,
+                    transform: `translateX(${indicatorRect?.left ?? 0}px)`,
+                  }}
+                />
                 {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="nav-link text-sm font-medium"
+                    ref={(el) => {
+                      linkRefs.current[link.href] = el;
+                    }}
+                    onMouseEnter={handleLinkHover}
+                    className={`nav-pill-link relative z-10 text-sm font-medium ${
+                      link.href === activeHref ? "text-accent" : ""
+                    }`}
                   >
                     {link.label}
                   </Link>
@@ -229,6 +310,8 @@ export default function Header() {
                   <CartIcon />
                   <CountBadge n={cartCount} />
                 </Link>
+                {/* Mobile: unchanged — always opens the link dropdown, at
+                    any scroll position. */}
                 <button
                   type="button"
                   aria-label="Toggle menu"
@@ -248,13 +331,43 @@ export default function Header() {
                     <path d="M3 12h18M3 6h18M3 18h18" />
                   </svg>
                 </button>
+
+                {/* Desktop, only once the island has collapsed: instead of a
+                    dropdown, this scrolls back to the top — which also
+                    expands the pill back out, since that's what un-collapses
+                    it in the first place. */}
+                <button
+                  type="button"
+                  aria-label="Back to top"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className={`icon-btn hidden h-9 w-9 items-center justify-center rounded-full bg-white/50 text-ink dark:bg-white/10 ${
+                    islandCollapsed ? "lg:flex" : ""
+                  }`}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 19V5M5 12l7-7 7 7" />
+                  </svg>
+                </button>
               </div>
             </>
           )}
         </div>
 
         {menuOpen ? (
-          <div className="nav-glass mt-2 flex flex-col gap-1 rounded-2xl p-4 lg:hidden">
+          <div
+            className={`nav-glass mx-auto mt-2 flex flex-col gap-1 rounded-2xl p-4 ${
+              islandCollapsed ? "max-w-[460px]" : "lg:hidden"
+            }`}
+          >
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}

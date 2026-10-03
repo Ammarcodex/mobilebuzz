@@ -64,7 +64,7 @@ export default function ShopClient({
   }, [products, categoryFilter, brandFilter, query, sort]);
 
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pb-16 pt-10">
+    <div className="mx-auto max-w-[1440px] px-6 pb-16 pt-10">
       <h1 className="m-0 mb-2 text-[32px] font-extrabold tracking-tight text-ink">
         Shop All Products
       </h1>

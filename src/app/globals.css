@@ -63,6 +63,26 @@
 
   /* Backdrop behind product photos (studio-style white "paper"). */
   --photo-bg: rgba(255, 255, 255, 0.9);
+
+  /* Thin gradient "liquid line" traced around every glass panel's edge —
+     most visible at the corners where the diagonal passes through its
+     brightest stops, echoing the ambient blob palette behind the glass. */
+  --corner-gradient: linear-gradient(
+    135deg,
+    rgba(0, 113, 227, 0.55),
+    rgba(168, 130, 255, 0.4) 45%,
+    rgba(255, 138, 92, 0.5) 100%
+  );
+
+  /* Fully-opaque version of the same palette, for gradient-filled headline
+     text (needs solid color stops to stay legible, unlike the translucent
+     corner line). */
+  --headline-gradient: linear-gradient(90deg, #0071e3, #8b5cf6 45%, #f2653f 90%);
+
+  /* Traveling nav-link indicator — soft accent-blue glass, not a gray/black
+     surface tint, so it reads as a light rather than a dark block. */
+  --nav-indicator-bg: rgba(0, 113, 227, 0.1);
+  --nav-indicator-border: rgba(0, 113, 227, 0.22);
 }
 
 :root[data-theme="dark"] {
@@ -74,7 +94,7 @@
   --color-accent-orange: #ff8257;
   --color-amber: #ffb340;
 
-  --surface-bg: rgba(28, 28, 32, 0.6);
+  --surface-bg: rgba(28, 28, 32, 0.4);
   --surface-border: rgba(255, 255, 255, 0.1);
   /* Much fainter than light mode's — a full glossy sheen would look washed
      out against a black page, so this just adds a hint of edge light. */
@@ -95,13 +115,33 @@
   --subtle-surface-strong: rgba(255, 255, 255, 0.09);
   --subtle-border: rgba(255, 255, 255, 0.12);
 
-  /* Black-based (not the gray --surface-bg cards use) so the navbar
-     visually merges with the pure-black dark page background. */
-  --nav-bg: rgba(0, 0, 0, 0.6);
+  /* Near-black, but much lower opacity than the gray --surface-bg cards
+     use: pure black at the same 0.6 alpha read as a flat, opaque slab that
+     blocked the page's ambient glow entirely and looked out of place next
+     to the softer, lighter glass cards — this keeps the dark tint (so it
+     still reads as "black" against the pure-black page) while staying
+     translucent enough to blend in as glass, not a solid bar. */
+  --nav-bg: rgba(10, 10, 12, 0.32);
 
   /* Near-black (not pure #000) so a product photo backdrop still reads as
      its own surface against the equally-black page, not an invisible box. */
   --photo-bg: #0d0d0f;
+
+  /* Brighter/more saturated than light mode's so it still reads clearly
+     against near-black glass. */
+  --corner-gradient: linear-gradient(
+    135deg,
+    rgba(10, 132, 255, 0.65),
+    rgba(168, 130, 255, 0.45) 45%,
+    rgba(255, 130, 90, 0.55) 100%
+  );
+
+  --headline-gradient: linear-gradient(90deg, #0a84ff, #a78bfa 45%, #ff8257 90%);
+
+  /* Brighter than light mode's so it stays a visible "light" glow against
+     the dark pill, not a dark blob. */
+  --nav-indicator-bg: rgba(10, 132, 255, 0.18);
+  --nav-indicator-border: rgba(10, 132, 255, 0.4);
 }
 
 * {
@@ -127,12 +167,19 @@ a {
   color: inherit;
 }
 
-/* Apple-style "liquid glass" surfaces */
+/* Apple-style "liquid glass" surfaces. The border is painted as a gradient
+   (not a flat color): a transparent border plus a 3-layer background where
+   the bottom-most layer is clipped to border-box, so the edge itself traces
+   the theme's gradient — most visible at the corners, like a thin liquid
+   line running around the glass. */
 .glass {
-  background: var(--surface-sheen), var(--surface-bg);
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--surface-bg), var(--surface-bg)) padding-box,
+    var(--surface-sheen) padding-box,
+    var(--corner-gradient) border-box;
   backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid var(--surface-border);
   box-shadow: var(--surface-shadow);
 }
 
@@ -162,15 +209,19 @@ a {
    its own padding/gap/background so JS only has to swap Tailwind classes
    for the Apple-style "squeeze" on scroll. */
 .nav-glass {
-  background: var(--surface-sheen), var(--nav-bg);
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--nav-bg), var(--nav-bg)) padding-box,
+    var(--surface-sheen) padding-box,
+    var(--corner-gradient) border-box;
   backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid var(--surface-border);
   box-shadow: var(--surface-shadow);
   transition:
     background 0.3s ease,
     padding 0.3s ease,
-    gap 0.3s ease;
+    gap 0.3s ease,
+    max-width 0.3s ease;
 }
 
 .pill-solid {
@@ -241,6 +292,46 @@ a {
   color: var(--color-accent);
 }
 
+/* Desktop main nav links — plain text at rest, same as .nav-link. The only
+   "glass" is the separate .nav-pill-indicator below, which glides to sit
+   behind whichever link the cursor is actually over — nothing is shown on
+   the others. Padding here only exists so the indicator has breathing room
+   around the text it's matched to, not to make each link look like a button
+   on its own. */
+.nav-pill-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  color: var(--nav-link-color);
+  transition: color 0.2s ease;
+}
+
+.nav-pill-link:hover {
+  color: var(--color-accent);
+}
+
+.nav-pill-indicator {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 0;
+  border-radius: 9999px;
+  background: var(--nav-indicator-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--nav-indicator-border);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill-indicator {
+    transition: opacity 0.2s ease;
+  }
+}
+
 .foot-link {
   color: var(--color-muted);
   transition: color 0.15s ease;
@@ -299,10 +390,88 @@ select option {
   border-radius: 9999px;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
 }
 
 :root[data-theme="dark"] .ambient-blob {
-  opacity: 1.4;
+  opacity: 1.8;
+}
+
+/* Slow, independent drift so the backdrop feels alive rather than a static
+   wallpaper — kept subtle (small offsets, 20s+ loops) since the point is
+   ambience, not something that pulls focus from the actual content. */
+@keyframes ambient-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, -30px) scale(1.08);
+  }
+  66% {
+    transform: translate(-25px, 20px) scale(0.96);
+  }
+}
+
+@keyframes ambient-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-45px, 35px) scale(1.1);
+  }
+}
+
+@keyframes ambient-drift-c {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  40% {
+    transform: translate(30px, 40px) scale(0.92);
+  }
+  70% {
+    transform: translate(-35px, -15px) scale(1.06);
+  }
+}
+
+.ambient-blob-a {
+  animation: ambient-drift-a 22s ease-in-out infinite;
+}
+
+.ambient-blob-b {
+  animation: ambient-drift-b 28s ease-in-out infinite;
+}
+
+.ambient-blob-c {
+  animation: ambient-drift-c 25s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-blob-a,
+  .ambient-blob-b,
+  .ambient-blob-c {
+    animation: none;
+  }
+}
+
+/* Subtle film-grain texture over the whole page — the thing that separates
+   a flat gradient from a "designed" premium backdrop. Barely perceptible on
+   its own; mostly noticeable as added depth across large empty areas. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:root[data-theme="dark"] .grain-overlay {
+  opacity: 0.05;
+  mix-blend-mode: soft-light;
 }
 
 /* Subtle button/panel backgrounds (replaces scattered bg-black/5,
@@ -390,6 +559,29 @@ select option {
   animation: toast-in 0.2s ease-out;
 }
 
+/* WhatsApp FAQ chat panel */
+@keyframes chat-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chat-panel-in {
+  transform-origin: bottom right;
+  animation: chat-panel-in 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-panel-in {
+    animation: none;
+  }
+}
+
 /* Typewriter headline */
 @keyframes typewriter-blink {
   0%,
@@ -406,7 +598,10 @@ select option {
   width: 3px;
   height: 0.9em;
   margin-left: 2px;
-  background: currentColor;
+  /* Explicit color, not currentColor — the headline this is used in can have
+     a transparent text color (gradient-clipped text), which would otherwise
+     make the cursor invisible too. */
+  background: var(--color-ink);
   vertical-align: text-bottom;
   animation: typewriter-blink 0.9s step-end infinite;
 }
@@ -463,5 +658,77 @@ select option {
   .hero-in {
     opacity: 1;
     animation: none;
+  }
+}
+
+/* Hero product photo — a gentle continuous float so it feels alive rather
+   than a static cutout, once the one-time hero-in entrance has settled it. */
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.hero-float {
+  animation: hero-float 4.5s ease-in-out infinite;
+  animation-delay: 0.7s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-float {
+    animation: none;
+  }
+}
+
+/* Apple-style gradient-filled headline text, with a slow shimmer as the
+   gradient drifts across the glyphs. */
+@keyframes gradient-text-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-text {
+  background-image: var(--headline-gradient);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-text-shift 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text {
+    animation: none;
+    background-position: 30% 50%;
+  }
+}
+
+/* .hero-in and .gradient-text both declare the `animation` shorthand — on an
+   element with both classes (the hero headline), whichever rule is more
+   specific wins OUTRIGHT, not a merge of the two, which left the headline
+   stuck invisible at the base `.hero-in { opacity: 0 }` with its entrance
+   animation never running. This combined, higher-specificity rule runs both
+   animations together via the comma-separated multi-animation syntax. */
+.hero-in.gradient-text {
+  animation:
+    hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    gradient-text-shift 6s ease-in-out infinite;
+  animation-delay: var(--hero-in-delay, 0ms), 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-in.gradient-text {
+    opacity: 1;
+    animation: none;
+    background-position: 30% 50%;
   }
 }

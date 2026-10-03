@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pb-16 pt-10">
+    <div className="mx-auto max-w-[1440px] px-6 pb-16 pt-10">
       <div className="skeleton mb-6 h-4 w-64 rounded-full" />
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">

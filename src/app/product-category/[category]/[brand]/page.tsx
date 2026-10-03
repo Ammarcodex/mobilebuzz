@@ -32,7 +32,7 @@ export default async function BrandPage({
   const items = await getProductsByCategoryAndBrand(category, brand);
 
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pb-16 pt-10">
+    <div className="mx-auto max-w-[1440px] px-6 pb-16 pt-10">
       <div className="mb-4">
         <Breadcrumbs
           items={[

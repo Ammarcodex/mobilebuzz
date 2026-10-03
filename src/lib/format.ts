@@ -22,6 +22,5 @@ export const BUSINESS = {
   phonePrimary: "+92 311 2269771",
   phonePrimaryHref: "tel:+923112269771",
   emailSales: "Mobilebuzz00@gmail.com",
-  emailInfo: "mobilenbazaar@gmail.com",
   whatsappNumber: "923112269771",
 } as const;
