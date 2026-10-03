@@ -178,15 +178,15 @@ a {
     linear-gradient(var(--surface-bg), var(--surface-bg)) padding-box,
     var(--surface-sheen) padding-box,
     var(--corner-gradient) border-box;
-  backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
+  backdrop-filter: blur(32px) saturate(200%);
   box-shadow: var(--surface-shadow);
 }
 
 .glass-dark {
   background: rgba(18, 19, 24, 0.62);
-  backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.35),
@@ -214,8 +214,8 @@ a {
     linear-gradient(var(--nav-bg), var(--nav-bg)) padding-box,
     var(--surface-sheen) padding-box,
     var(--corner-gradient) border-box;
-  backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
+  backdrop-filter: blur(32px) saturate(200%);
   box-shadow: var(--surface-shadow);
   transition:
     background 0.3s ease,
@@ -317,8 +317,8 @@ a {
   left: 0;
   border-radius: 9999px;
   background: var(--nav-indicator-bg);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--nav-indicator-border);
   transition:
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
@@ -728,6 +728,65 @@ select option {
 @media (prefers-reduced-motion: reduce) {
   .hero-in.gradient-text {
     opacity: 1;
+    animation: none;
+    background-position: 30% 50%;
+  }
+}
+
+/* ----------------------------------------------------------------------
+   Mobile performance pass.
+
+   backdrop-filter blur is one of the most GPU-expensive effects a browser
+   can do, and it doesn't batch: every .glass/.nav-glass panel (product
+   cards, nav, search bar, buttons — commonly 50-70+ on a single page like
+   /shop) is its own full-cost blur, re-composited on every scroll frame.
+   Desktop GPUs shrug this off; phone GPUs (especially mid-range Android)
+   choke on it, which is the classic cause of "smooth on laptop, laggy on
+   phone" for glassmorphic UI specifically. Cutting the blur radius and
+   dropping saturate() (also expensive) below the `md` breakpoint keeps the
+   frosted-glass look while being dramatically cheaper to render.
+
+   Same logic for the ambient background blobs: each one is a large,
+   continuously-animated, heavily blurred element — animating `filter`
+   (not just `transform`) forces repaint on most engines, so six of them
+   drifting forever is a steady, ongoing GPU cost on every frame, not a
+   one-time one. Mobile gets fewer blobs and no drift, just a static wash.
+   ---------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .glass {
+    background: var(--surface-bg);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-glass {
+    background: var(--nav-bg);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Keep .glass-dark's own fixed dark background (it's meant to stay dark
+     in both themes) — only cut its blur cost. */
+  .glass-dark {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  .ambient-blob-a,
+  .ambient-blob-b,
+  .ambient-blob-c {
+    animation: none;
+  }
+
+  .ambient-blob:nth-of-type(n + 4) {
+    display: none;
+  }
+
+  .hero-float {
+    animation: none;
+  }
+
+  .gradient-text {
     animation: none;
     background-position: 30% 50%;
   }
